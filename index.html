@@ -2,12 +2,12 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lift20</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1219;--s:#181d2a;--s2:#242b3d;--t:#eef0f6;--m:#9aa2b8;--a:#8aa4ff;--on:#0b0f1a;--g:#ffc857;--ok:#6ee7b7;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f3f4f8;--s:#fff;--s2:#e4e8f2;--t:#151a26;--m:#5a627a;--a:#3450d0;--on:#fff;--g:#a86a00;--ok:#0b8a5f;color-scheme:light}}
-:root[data-theme=light]{--bg:#f3f4f8;--s:#fff;--s2:#e4e8f2;--t:#151a26;--m:#5a627a;--a:#3450d0;--on:#fff;--g:#a86a00;--ok:#0b8a5f;color-scheme:light}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--bg:#202833;--s:#2a3441;--s2:#38445a;--t:#EAE0C8;--m:#b9b4a2;--a:#EAE0C8;--on:#202833;--g:#e3c27d;--ok:#a8d5ba;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#EAE0C8;--s:#f4eddb;--s2:#d9cfb4;--t:#202833;--m:#4d5463;--a:#202833;--on:#EAE0C8;--g:#8a5a00;--ok:#226646;color-scheme:light}}
+:root[data-theme=light]{--bg:#EAE0C8;--s:#f4eddb;--s2:#d9cfb4;--t:#202833;--m:#4d5463;--a:#202833;--on:#EAE0C8;--g:#8a5a00;--ok:#226646;color-scheme:light}
+*{box-sizing:border-box}input[type=checkbox]{accent-color:var(--a)}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--t);font:500 16px/1.4 "Bricolage Grotesque",system-ui,sans-serif;overflow-x:hidden}
 main{max-width:760px;margin:0 auto;padding:20px 16px 110px}
 h1{font-size:2.4rem;line-height:1.05;margin:.2em 0 .4em;font-weight:800;letter-spacing:-.02em}h2{margin:1.6em 0 .5em}h3{margin:0 0 .5em}
@@ -29,7 +29,6 @@ label{display:block;color:var(--m)}select{display:block;width:100%;min-height:48
 .dots{display:flex;gap:8px}.dots span{flex:1;text-align:center;font-size:.8rem;color:var(--m)}.dots i{display:block;width:100%;aspect-ratio:1;border-radius:50%;border:2px solid var(--s2);margin-bottom:4px}.dots .p i{border-color:var(--a)}.dots .d i{background:var(--ok);border-color:var(--ok)}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--s);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--s2);z-index:5}
 nav button{flex:1;min-height:52px;background:none;border:0;border-radius:14px;color:var(--m);font-weight:700}nav button[aria-current=true]{color:var(--t);background:var(--s2)}
-@media(min-width:900px){nav{top:0;right:auto;width:190px;flex-direction:column;gap:4px;padding:calc(20px + env(safe-area-inset-top,0px)) 10px;border:0}main{margin-left:190px;margin-right:auto;max-width:820px;padding-bottom:40px}}
 #w{position:fixed;inset:0;z-index:10;background:var(--bg);overflow:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
 #w>div{max-width:520px;margin:0 auto}#w[hidden]{display:none}
 .wh{display:flex;align-items:center;gap:12px;color:var(--m)}.bar{height:6px;background:var(--s2);border-radius:9px;margin:10px 0 18px}.bar i{display:block;height:100%;background:var(--a);border-radius:9px;transition:width .4s}
@@ -41,6 +40,53 @@ dialog ol{padding-left:20px}.pr{color:var(--g);font-weight:800}
 .cf{position:fixed;top:-10px;width:9px;height:14px;border-radius:2px;animation:fall 1.8s ease-in forwards;pointer-events:none}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
 :focus-visible{outline:3px solid var(--g);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.cf{display:none}}
+
+/* ---- desktop (>=900px): sidebar + multi-column views. Mobile rules above are untouched. ---- */
+@media(min-width:900px){
+body{padding-left:230px}
+nav{top:0;right:auto;width:230px;flex-direction:column;gap:6px;padding:calc(28px + env(safe-area-inset-top,0px)) 14px 20px;border:0;border-right:1px solid var(--s2)}
+nav::before{content:"Lift20";font:italic 400 2.4rem/1 "Instrument Serif",Georgia,serif;color:var(--t);padding:0 14px 22px}
+nav button{flex:none;text-align:left;padding:0 14px;min-height:48px;font-size:1rem}nav button:hover{background:var(--s2);color:var(--t)}
+main{max-width:1120px;padding:44px 48px 56px;margin:0 auto}
+h1,.n{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+h1{font-size:3.6rem;letter-spacing:-.01em;margin:0 0 .3em}.n{font-size:3.2rem;line-height:1}
+h2{font-size:1.5rem;margin:.2em 0 .1em}
+main[class^=v-]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;row-gap:20px;align-items:start}
+main[class^=v-]>*{margin:0;grid-column:1/-1}
+main .card{padding:22px}main .card:hover{box-shadow:0 8px 28px #0002}
+.chips{flex-wrap:wrap;overflow:visible}
+.big{max-width:none}
+/* home */
+main.v-home{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+main.v-home>p:first-child{margin-bottom:-14px}
+main.v-home>.hero{grid-column:1;grid-row:3/span 2;align-self:stretch;display:flex;flex-direction:column}.v-home .hero .big{margin-top:auto}.v-home .hero ul.list{margin:8px 0 20px}
+main.v-home>.card:nth-of-type(2){grid-column:2;grid-row:3}
+main.v-home>.grid{grid-column:2;grid-row:4;grid-template-columns:1fr;gap:20px}
+main.v-home .hero ul.list li{align-items:center;padding:9px 0;border-bottom:1px solid var(--s2)}.v-home .hero ul.list li:last-child{border:0}
+/* workouts */
+main.v-prog{grid-template-columns:repeat(3,minmax(0,1fr))}
+main.v-prog>.card:nth-of-type(-n+3){grid-column:auto}
+main.v-prog>.row,.v-prog>.big{grid-column:1/3;max-width:none}
+main.v-prog>.big{grid-column:1/2;margin:0}
+main.v-prog .li .ghost{flex:none;min-width:72px}
+/* exercises */
+main.v-ex>.card{columns:2;column-gap:40px}.v-ex .li{break-inside:avoid}
+/* progress */
+main.v-stats>.grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+main.v-stats>div:nth-of-type(2){grid-column:1}.v-stats>div:nth-of-type(4){grid-column:1}
+main.v-stats>div:nth-of-type(3){grid-column:2;grid-row:3/span 2}
+/* profile */
+main.v-me>div:nth-of-type(1){grid-column:1}.v-me>div:nth-of-type(3){grid-column:1}
+main.v-me>div:nth-of-type(2){grid-column:2;grid-row:2/span 2}
+/* workout overlay becomes a centered panel */
+#w{display:grid;place-items:center;padding:32px}
+#w[hidden]{display:none}
+#w>div{width:min(640px,100%);max-width:none;margin:0;background:var(--s);border-radius:32px;padding:36px 44px 40px;box-shadow:0 20px 60px #0004}
+#w h1{font-size:3rem}#w .card{background:var(--s2);box-shadow:none}
+#w .ring{width:260px}.step output{font-size:5.5rem}
+dialog{width:min(560px,92vw)}
+}
+@media(min-width:1500px){main{max-width:1240px}}
 </style></head><body>
 <main id="app"></main>
 <div id="w" hidden></div>
@@ -140,7 +186,7 @@ const me=()=>`<h1>Profile</h1><div class="card"><h3>Equipment</h3>${['dip','db',
 <div class="card"><h3>Progression with fixed 7 kg dumbbells</h3><p>Add a rep each session until you hit the top of the range on every set. Then slow the lowering to 3 seconds, add a 1-second pause, or move to a harder version (two legs to one, wider push-up to close-grip). Cut rest only on small accessory lifts.</p></div>
 <div class="card"><h3>Data</h3><p class="m">Everything is stored on this device.</p><button class="ghost" data-a="reset">Erase all data</button></div>`;
 const V={home,prog:plan,ex,stats,me};
-const render=()=>{app.innerHTML=V[v]();document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v==v))};
+const render=()=>{app.className='v-'+v;app.innerHTML=V[v]();document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v==v))};
 
 const show=h=>{dlg.innerHTML=h+'<form method="dialog"><button class="big">Close</button></form>';dlg.showModal()};
 const det=id=>{const e=E[id];return `<h2>${e.n}</h2><p class="m">${e.g}, ${['','beginner','intermediate'][e.d]}, ${EQ[e.q]}${av(id)?'':' (turn it on in Profile)'}</p><p><b>${e.s} sets × ${e.lo}–${e.hi} reps</b>, rest ${e.r}s</p><ol>${e.h.split('. ').map(x=>`<li>${x.replace(/\.$/,'')}.</li>`).join('')}</ol><p class="m">Progress: add a rep each session until ${e.hi} on every set, then slow the lowering to 3 seconds.</p><a class="big" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' proper form')}" target="_blank" rel="noopener">Find a tutorial on YouTube</a>`};
@@ -158,7 +204,7 @@ w.innerHTML=`<div><h1>Workout complete</h1><div class="grid"><div class="card"><
 <div class="card"><h3>Highlights</h3>${Object.keys(by).map(i=>`<div class="li"><span>${E[i].n}</span><b>${by[i].join(' / ')}</b></div>`).join('')}</div>
 ${W.prs.size?`<div class="card"><h3 class="pr">New personal bests</h3>${[...W.prs].map(i=>`<p>${E[i].n}: ${W.best[i]} reps</p>`).join('')}</div>`:''}
 <p class="m">This week: ${wkDone().size} of 3 workouts</p><button class="big" data-a="close">Done</button></div>`;
-for(let k=0;k<26;k++){const s=document.createElement('i');s.className='cf';s.style.cssText=`left:${Math.random()*100}vw;background:hsl(${Math.random()*360} 80% 65%);animation-delay:${Math.random()*.5}s`;w.append(s);setTimeout(()=>s.remove(),2600)}return}
+for(let k=0;k<26;k++){const s=document.createElement('i');s.className='cf';s.style.cssText=`left:${Math.random()*100}vw;background:var(--${['a','g','ok','m'][k%4]});animation-delay:${Math.random()*.5}s`;w.append(s);setTimeout(()=>s.remove(),2600)}return}
 const id=W.ids[W.i],e=E[id],r=W.rest;
 w.innerHTML=`<div><div class="wh"><button class="ghost" data-a="quit" aria-label="End workout">✕</button><span>Exercise ${W.i+1} of ${W.ids.length}</span></div><div class="bar"><i style="width:${W.logs.length/W.total*100}%"></i></div>
 <h1>${e.n}</h1><p class="m">Target ${e.s} × ${e.lo}–${e.hi}, set ${W.s+1} of ${e.s}${S.pr[id]?`, best ${S.pr[id]}`:''}</p>`+

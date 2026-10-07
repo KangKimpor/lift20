@@ -1,0 +1,16 @@
+{
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Lift20",
+        "supportEmail": "kimporkang01@gmail.com",
+        "authorizedRedirectUris": [
+          "https://lift20.vercel.app"
+        ]
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

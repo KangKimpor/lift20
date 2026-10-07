@@ -119,13 +119,62 @@ dialog{width:min(560px,92vw)}
 // ponytail: one file, no framework/build; string templates + one render(). Upgrade to a framework if screens outgrow this.
 // ponytail: exercise data is one pipe-delimited block parsed once; move to JSON if it needs per-exercise video IDs.
 // ===== GOOGLE LOGIN + CLOUD SAVE (Firebase) =====
-// Owner: create https://console.firebase.google.com, enable Google sign-in, add your deploy domain,
-// paste the web config (apiKey, authDomain, projectId, ...) below, then deploy to Vercel.
+// Owner setup (one time): https://console.firebase.google.com -> build a web app,
+// enable Google in Authentication > Sign-in method, add the deploy domain under
+// Authentication > Settings > Authorized domains, paste the web config below.
+// Firestore security rule: allow read, write: if request.auth != null && request.auth.uid == userId;
+// Signed out: the app works fully on localStorage (the offline copy). Signed in: doc users/{uid}.
 const FIREBASE_CONFIG={
-  apiKey: "",authDomain: "",projectId: "",storageBucket: "",messagingSenderId: "",appId: ""
+  apiKey: "AIzaSyA-hF_RbzWKGf5yJmptoAhDc2zlcpXrXZ4",authDomain: "lift20-workout.firebaseapp.com",
+  projectId: "lift20-workout",storageBucket: "lift20-workout.firebasestorage.app",
+  messagingSenderId: "310895374794",appId: "1:310895374794:web:f043bc4cc76a0ca9499f33"
 };
-const loadFB=async(libs)=>Object.fromEntries((await Promise.all(libs.map(l=>import(`https://www.gstatic.com/firebasejs/10.12.0/firebase-${l}.js`)))).map(m=>[m.default.name||'x',m]));
+let FB=null; // {auth,db,doc,setDoc,onSnapshot,onAuthStateChanged,GoogleAuthProvider} once loaded
+const initFirebase=async()=>{
+  if(FB)return FB;
+  if(!FIREBASE_CONFIG.apiKey)throw new Error('Firebase config not pasted yet');
+  const [fa,fu,fir]=await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js'),
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+  ]);
+  const app=fa.initializeApp(FIREBASE_CONFIG);
+  FB={auth:fu.getAuth(app),db:fir.getFirestore(app),doc:fir.doc,setDoc:fir.setDoc,
+     onSnapshot:fir.onSnapshot,onAuthStateChanged:fu.onAuthStateChanged,GoogleAuthProvider:fu.GoogleAuthProvider};
+  return FB;
+};
+const auth=()=>FB&&FB.auth||null; // null until Firebase has loaded (or config missing)
+const signInWithGoogle=async()=>{const f=await initFirebase();await f.auth.signInWithPopup(new f.GoogleAuthProvider())};
+const signOutGoogle=async()=>{const f=await initFirebase();await f.auth.signOut()};
+// Merge rule: longer hist wins, per-exercise PR is the max of both. prog/eq stay on this device.
+const mergeData=(loc,clr)=>{
+  if(!clr||!Array.isArray(clr.hist))return loc;
+  if(!loc||!Array.isArray(loc.hist))return clr;
+  const out=JSON.parse(JSON.stringify(loc));
+  out.hist=(clr.hist.length>loc.hist.length?clr:loc).hist.slice();
+  out.pr=Object.assign({},loc.pr||{},clr.pr||{});
+  for(const k in out.pr)out.pr[k]=Math.max((loc.pr&&loc.pr[k])||0,(clr.pr&&clr.pr[k])||0);
+  return out;
+};
+let unsub=null;
+const syncFromCloud=async()=>{
+  if(unsub)return;
+  const f=await initFirebase();
+  if(!f.auth.currentUser)return;
+  unsub=f.onSnapshot(f.doc(f.db,'users/'+f.auth.currentUser.uid),snap=>{
+    if(!snap.exists())return; // cloud empty; the next save() seeds it from this device
+    S=mergeData(S,snap.data());
+    try{localStorage[K]=JSON.stringify(S)}catch{}
+    if(typeof render==='function')render();
+  },e=>{console.warn('Cloud sync failed',e);unsub=null});
+};
+const save=()=>{
+  try{localStorage[K]=JSON.stringify(S)}catch{alert('Storage is full or blocked. Progress will not survive a refresh.');return}
+  if(FB&&FB.auth.currentUser)
+    FB.setDoc(FB.doc(FB.db,'users/'+FB.auth.currentUser.uid),S,{merge:true}).catch(e=>console.warn('Cloud save failed',e));
+};
 
+const L=`dip|Dips|chest|push|dip|2|3|6|12|90|Support yourself on straight arms and lean forward slightly. Lower until shoulders pass just below elbows. Press back up. Keep elbows from flaring wide.
 pu|Push-ups|chest|push|bw|1|3|8|15|75|Hands under shoulders, body in one straight line. Lower chest to just above the floor. Push up without sagging hips.
 wpu|Wide Push-ups|chest|push|bw|1|3|8|15|75|Hands wider than shoulders. Lower with control. Press up and keep your body straight.
 cgpu|Close-Grip Push-ups|triceps|push|bw|1|3|8|15|75|Hands just inside shoulder width. Keep elbows close to your ribs. Lower and press up.
@@ -171,7 +220,6 @@ const FM={full:['legs','chest','back','shoulders','core'],upper:['chest','back',
 const P=[['Quick full body','full',15],['Full body','full',25],['Upper body','upper',25],['Lower body','lower',20],['Chest + triceps','chest',20],['Back + biceps','back',20],['Shoulder focus','shoulders',15],['Arm focus','arms',15],['Core','core',10],['Quick 10','full',10]];
 const K='lift20';let S;try{S=JSON.parse(localStorage[K])}catch{}
 S=S||{prog:{A:['dip','gob','ohrow','rdl','curl'],B:['sp','rl','pu','bor','lat'],C:['dip','rdl','gob','sp','ham']},hist:[],eq:{dip:1,db:1,bar:0},pr:{}};
-const save=()=>{try{localStorage[K]=JSON.stringify(S)}catch{alert('Storage is full or blocked. Progress will not survive a refresh.')}};
 const av=i=>E[i].q=='bw'||S.eq[E[i].q];
 const est=ids=>Math.round(ids.reduce((t,i)=>t+E[i].s*(30+E[i].r),0)/60);
 const alts=(id,cur)=>Object.keys(E).filter(i=>av(i)&&i!=id&&E[i].g==E[id].g&&!cur.includes(i)).sort((a,b)=>(E[b].p==E[id].p)-(E[a].p==E[id].p));
@@ -211,10 +259,13 @@ return `<h1>Progress</h1><div class="grid"><div class="card"><p class="m">Workou
 <div class="card"><h3>Personal bests</h3>${Object.keys(S.pr).map(i=>`<div class="li"><span>${E[i].n}</span><b class="pr">${S.pr[i]} reps</b></div>`).join('')||'<p class="m">Your bests appear here after your first workout.</p>'}</div>
 <div class="card"><h3>Recent</h3>${[...h].reverse().slice(0,8).map(x=>`<div class="li"><span>${x.day?'Day '+x.day:'Custom'}, ${x.logs.length} sets</span><span class="m">${fmtD(x.d)}, ${x.dur} min</span></div>`).join('')||'<p class="m">Nothing logged yet.</p>'}</div>`};
 
-const me=()=>`<h1>Profile</h1><div class="card"><h3>Equipment</h3>${['dip','db','bar'].map(k=>`<label class="li" style="color:inherit;min-height:52px"><span>${EQ[k]}</span><input type="checkbox" style="width:26px;height:26px;flex:none" data-k="eq" value="${k}" ${S.eq[k]?'checked':''}></label>`).join('')}
+const me=()=>{
+  const u=auth()&&auth().currentUser;
+  const acc=u?`<div class="li"><span>Signed in as ${u.email||u.providerId.split('/').pop()}</span></div><button class="ghost" data-a="signout">Sign out</button>`:`<button class="big" data-a="signin">Continue with Google</button>`;
+  return `<h1>Profile</h1><div class="card"><h3>Equipment</h3>${['dip','db','bar'].map(k=>`<label class="li" style="color:inherit;min-height:52px"><span>${EQ[k]}</span><input type="checkbox" style="width:26px;height:26px;flex:none" data-k="eq" value="${k}" ${S.eq[k]?'checked':''}></label>`).join('')}
 <p class="m">Without the pull-up bar there is no vertical pulling, only rows and pullovers. Turning gear on or off updates your program and builder right away.</p></div>
 <div class="card"><h3>Progression with fixed 7 kg dumbbells</h3><p>Add a rep each session until you hit the top of the range on every set. Then slow the lowering to 3 seconds, add a 1-second pause, or move to a harder version (two legs to one, wider push-up to close-grip). Cut rest only on small accessory lifts.</p></div>
-<div class="card"><h3>Data</h3><p class="m">Everything is stored on this device.</p><button class="ghost" data-a="reset">Erase all data</button></div>`;
+<div class="card"><h3>Cloud account</h3>${acc()}</div>`};
 const V={home,prog:plan,ex,stats,me};
 const render=e=>{app.className='v-'+v+(e?' enter':'');app.innerHTML=V[v]();cnt();document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v==v))};
 
@@ -272,8 +323,12 @@ rp(){const r=W.rest;if(r.pause){r.pause=0;r.end=Date.now()+r.left*1e3}else r.pau
 next(){W.rest=null;wk()},
 quit(){if(confirm('End this workout? Sets so far will not be saved.')){clearInterval(T);W=null;wk()}},
 close(){W=null;wk();v='home';render()},
-reset(){if(confirm('Erase all workouts, records and settings?')){try{localStorage.removeItem(K)}catch{}location.reload()}}};
+reset(){if(confirm('Erase all workouts, records and settings?')){try{localStorage.removeItem(K)}catch{}location.reload()}},
+signin(){signInWithGoogle().then(()=>syncFromCloud()).then(()=>{render(1);toast('Signed in')}).catch(e=>{console.warn('Sign in failed',e);toast('Sign in failed: '+(e.code||e.message||'error'))})},
+signout(){signOutGoogle().then(()=>{if(unsub){unsub();unsub=null}render(1);toast('Signed out')}).catch(e=>{console.warn('Sign out failed',e);toast('Sign out failed')})}};
 document.onclick=e=>{const b=e.target.closest('[data-a]');if(b)act[b.dataset.a](b.dataset.v)};
 document.onchange=e=>{const t=e.target,k=t.dataset.k;if(k=='eq'){S.eq[t.value]=t.checked?1:0;fix();save();render();toast('Program updated')}else if(k)B[k]=k=='d'?+t.value:t.value};
 render(1);
+// Cloud: restore a previous Google session and stream changes (skipped until the owner pastes the config).
+if(FIREBASE_CONFIG.apiKey)initFirebase().then(f=>f.onAuthStateChanged(f.auth,u=>{if(u)syncFromCloud().catch(e=>console.warn('Cloud restore failed',e))})).catch(e=>console.warn('Cloud unavailable',e));
 </script></body></html>

@@ -44,12 +44,14 @@ dialog ol{padding-left:20px}
 .act:active,.sw:active,.opt:active{transform:scale(.96)}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;margin-top:10px;padding:12px 16px;border:1px solid var(--s2);border-radius:16px;background:transparent;text-align:left;transition:transform .12s,border-color .2s}.opt .m{display:block;font-weight:400}
 .tag{flex:none;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--s2)}.tag.same{background:var(--g);color:var(--on)}
-.vp{position:relative;aspect-ratio:16/9;max-width:calc(36vh*16/9);margin:16px auto 0;border-radius:18px;overflow:hidden;background:var(--s2)}
+.vp{position:relative;aspect-ratio:9/16;height:min(56vh,440px);margin:16px auto 0;border-radius:18px;overflow:hidden;background:var(--s2)}
 .vp iframe,.vp img,.vf{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:none;object-fit:cover}
 .vf i{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px;border-radius:50%;background:var(--a);color:var(--on);display:grid;place-items:center}
 .yl{text-align:center;font-size:.85rem}.yl a{color:inherit}
-.vl{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;margin-top:16px;border:1px solid var(--s2);border-radius:16px;font-weight:700;text-decoration:none;color:inherit}
-@media(hover:hover){.act:hover,.sw:hover{background:var(--a);color:var(--on)}.opt:hover,.vl:hover{border-color:var(--a)}}.pr{color:var(--g);font-weight:800}
+a.act{text-decoration:none;color:inherit}.act[aria-pressed=true]{background:var(--a);color:var(--on)}
+.vn{margin-top:16px;text-align:center}.lk{background:none;border:0;padding:0 0 0 12px;font:inherit;text-decoration:underline;color:inherit}
+.fld{display:block;width:100%;min-height:48px;margin-top:4px;background:var(--bg);border:1px solid var(--s2);border-radius:12px;padding:0 12px;font:inherit;color:inherit}.wn{font-size:2.6rem;font-weight:800;font-variant-numeric:tabular-nums}
+@media(hover:hover){.act:hover,.sw:hover{background:var(--a);color:var(--on)}.opt:hover{border-color:var(--a)}}.pr{color:var(--g);font-weight:800}
 .cf{position:fixed;top:-10px;width:9px;height:14px;border-radius:2px;animation:fall 1.8s ease-in forwards;pointer-events:none}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
 :focus-visible{outline:3px solid var(--g);outline-offset:2px}
 /* ---- feedback motion (all disabled by the reduced-motion rule below) ---- */
@@ -97,6 +99,7 @@ main.v-home>p:first-child{margin-bottom:-14px}
 main.v-home>.hero{grid-column:1;grid-row:3/span 2;align-self:stretch;display:flex;flex-direction:column}.v-home .hero .big{margin-top:auto}.v-home .hero ul.list{margin:8px 0 20px}
 main.v-home>.card:nth-of-type(2){grid-column:2;grid-row:3}
 main.v-home>.grid{grid-column:2;grid-row:4;grid-template-columns:1fr;gap:20px}
+main.v-home>.card:nth-of-type(2),.v-home>.grid .card{display:flex;flex-direction:column;justify-content:center}
 main.v-home .hero ul.list li{align-items:center;padding:9px 0;border-bottom:1px solid var(--s2)}.v-home .hero ul.list li:last-child{border:0}
 /* workouts */
 main.v-prog{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -168,6 +171,9 @@ const mergeData=(loc,clr)=>{
   out.hist=(clr.hist.length>loc.hist.length?clr:loc).hist.slice();
   out.pr=Object.assign({},loc.pr||{},clr.pr||{});
   for(const k in out.pr)out.pr[k]=Math.max((loc.pr&&loc.pr[k])||0,(clr.pr&&clr.pr[k])||0);
+  // ponytail: weights union by timestamp and saved video links union by exercise; a weight deleted on one device can come back from another until it is deleted there too.
+  const wm={};[...(loc.w||[]),...(clr.w||[])].forEach(e=>wm[e.d]=e);out.w=Object.values(wm).sort((a,b)=>a.d-b.d);
+  out.vids=Object.assign({},clr.vids||{},loc.vids||{});
   return out;
 };
 let unsub=null;
@@ -177,7 +183,7 @@ const syncFromCloud=async()=>{
   if(!f.auth.currentUser)return;
   unsub=f.onSnapshot(f.doc(f.db,'users/'+f.auth.currentUser.uid),snap=>{
     if(!snap.exists())return; // cloud empty; the next save() seeds it from this device
-    S=mergeData(S,snap.data());
+    S=mergeData(S,snap.data());ensure();
     try{localStorage[K]=JSON.stringify(S)}catch{}
     if(typeof render==='function')render();
   },e=>{console.warn('Cloud sync failed',e);unsub=null});
@@ -247,7 +253,7 @@ xham|Cross-Body Hammer Curl|biceps|iso|db|1|3|10|15|60|Stand with the dumbbells 
 rcurl|Reverse Curl|biceps|iso|db|1|3|10|15|60|Stand with palms facing down and elbows tight to your sides. Curl the dumbbells up without letting your wrists bend. Lower slowly.
 tcurl|Tempo Curl|biceps|iso|db|1|3|8|12|60|Stand tall with palms facing forward. Curl up in one second. Lower for 3 seconds.`;
 const E={};L.split('\n').forEach(l=>{const[id,n,g,p,q,d,s,lo,hi,r,h]=l.split('|');E[id]={id,n,g,p,q,d:+d,s:+s,lo:+lo,hi:+hi,r:+r,h}});
-const DAY=['A','B','C'],EQ={bw:'Bodyweight',db:'2 × 7 kg dumbbells',dip:'Dip station',bar:'Pull-up bar'};
+const DAY=['A','B','C','X'],WHEN={A:'Mon',B:'Wed',C:'Fri',X:'Weekend'},EQ={bw:'Bodyweight',db:'2 × 7 kg dumbbells',dip:'Dip station',bar:'Pull-up bar'};
 const FM={full:['legs','chest','back','shoulders','core'],upper:['chest','back','shoulders','biceps','triceps'],lower:['legs','core'],chest:['chest','triceps'],back:['back','biceps'],shoulders:['shoulders'],arms:['biceps','triceps'],legs:['legs'],core:['core']};
 const P=[['Quick full body','full',15],['Full body','full',25],['Upper body','upper',25],['Lower body','lower',20],['Chest + triceps','chest',20],['Back + biceps','back',20],['Shoulder focus','shoulders',15],['Arm focus','arms',15],['Core','core',10],['Quick 10','full',10]];
 const K='lift20';let S;try{S=JSON.parse(localStorage[K])}catch{}
@@ -255,8 +261,9 @@ S=S||{prog:{A:['dip','gob','ohrow','rdl','curl'],B:['sp','rl','pu','bor','lat'],
 const av=i=>E[i].q=='bw'||S.eq[E[i].q];
 const est=ids=>Math.round(ids.reduce((t,i)=>t+E[i].s*(30+E[i].r),0)/60);
 const alts=(id,cur)=>Object.keys(E).filter(i=>av(i)&&i!=id&&E[i].g==E[id].g&&!cur.includes(i)).sort((a,b)=>(E[b].p==E[id].p)-(E[a].p==E[id].p));
+const ensure=()=>{S.prog.X=S.prog.X||['tpu','bor','arn','sk','dead'];S.w=S.w||[];S.vids=S.vids||{}};
 const fix=()=>{for(const d of DAY)S.prog[d]=S.prog[d].map(i=>av(i)?i:(alts(i,S.prog[d])[0]||i))};
-fix();
+ensure();fix();
 console.assert(Object.values(S.prog).flat().every(av)&&!Object.values(E).some(e=>/bulgarian|bench|step-up/i.test(e.n)),'program needs gear we do not own');
 let v='home',F='all',B={f:'full',d:25},G=null,W=null,SW=null,T;
 const $=s=>document.querySelector(s),app=$('#app'),w=$('#w'),dlg=$('#dlg');
@@ -268,15 +275,15 @@ const streak=()=>{let n=0,p=Date.now();for(const h of [...S.hist].reverse()){if(
 const week=()=>{const d=wkDone();return `<div class="dots">${'MTWTFSS'.split('').map((c,k)=>`<span class="${d.has(k)?'d':[0,2,4].includes(k)?'p':''}"><i></i>${c}${d.has(k)?'<b class="sr" hidden> done</b>':''}</span>`).join('')}</div>`};
 const row=i=>`<div class="li"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}</button><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}</span></div>`;
 
-const home=()=>{const d=DAY[S.hist.filter(h=>h.day).length%3],ids=S.prog[d],hr=new Date().getHours(),last=S.hist.at(-1),b=ids.find(i=>S.pr[i]);
+const home=()=>{const g=new Date().getDay(),d={1:'A',2:'B',3:'B',4:'C',5:'C'}[g]||'X',tag=g%6==0?'Weekend bonus':g%2?'Today':'Next up, '+WHEN[d],ids=S.prog[d],hr=new Date().getHours(),last=S.hist.at(-1),b=ids.find(i=>S.pr[i]);
 return `<p class="m">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening'}, Por</p><h1>Day ${d}</h1>
-<div class="card hero"><p class="m">${ids.length} exercises, about ${est(ids)} min</p><ul class="list">${ids.map(i=>`<li>${E[i].n}<span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}</span></li>`).join('')}</ul><button class="big" data-a="start" data-v="${d}">Start workout</button></div>
-<div class="card"><h3>This week</h3>${week()}<p class="m">Outlined days are Mon, Wed, Fri.</p></div>
-<div class="grid"><div class="card"><p class="m">Streak</p><span class="n">${streak()}</span> workouts</div>
-<div class="card"><p class="m">Last workout</p>${last?`<b>${last.day?'Day '+last.day:'Custom'}</b>, ${last.dur} min<br><span class="m">${fmtD(last.d)}</span>`:'<span class="m">None yet</span>'}</div>
-<div class="card"><p class="m">Next goal</p>${b?`Beat ${S.pr[b]} reps on ${E[b].n}`:'Finish your first workout to set records'}</div></div>`};
+<div class="card hero"><p class="m">${tag}, ${ids.length} exercises, about ${est(ids)} min</p><ul class="list">${ids.map(i=>`<li>${E[i].n}<span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}</span></li>`).join('')}</ul><button class="big" data-a="start" data-v="${d}">Start workout</button></div>
+<div class="card"><h3>This week</h3>${week()}</div>
+<div class="grid"><div class="card"><div><p class="m">Streak</p><span class="n">${streak()}</span> workouts</div></div>
+<div class="card"><div><p class="m">Last workout</p>${last?`<b>${last.day?'Day '+last.day:'Custom'}</b>, ${last.dur} min<br><span class="m">${fmtD(last.d)}</span>`:'<span class="m">None yet</span>'}</div></div>
+<div class="card"><div><p class="m">Next goal</p>${b?`Beat ${S.pr[b]} reps on ${E[b].n}`:'Finish your first workout to set records'}</div></div></div>`};
 
-const plan=()=>`<h1>Workouts</h1><h2>My program</h2>${DAY.map(d=>`<div class="card"><h3>Day ${d}, about ${est(S.prog[d])} min</h3>${S.prog[d].map((i,k)=>`<div class="li"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}</button><button class="sw" data-a="swap" data-v="${d}${k}" aria-label="Swap ${E[i].n}">${I.swap} Swap</button></div>`).join('')}<button class="big" data-a="start" data-v="${d}">Start day ${d}</button></div>`).join('')}
+const plan=()=>`<h1>Workouts</h1><h2>My program</h2>${DAY.map(d=>`<div class="card"><h3>Day ${d} (${WHEN[d]}), about ${est(S.prog[d])} min</h3>${S.prog[d].map((i,k)=>`<div class="li"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}</button><button class="sw" data-a="swap" data-v="${d}${k}" aria-label="Swap ${E[i].n}">${I.swap} Swap</button></div>`).join('')}<button class="big" data-a="start" data-v="${d}">Start day ${d}</button></div>`).join('')}
 <h2>Build a workout</h2><div class="chips">${P.map((p,k)=>`<button class="chip" data-a="pre" data-v="${k}">${p[0]}</button>`).join('')}</div>
 <div class="row"><label>Focus<select data-k="f">${Object.keys(FM).map(f=>`<option ${f==B.f?'selected':''}>${f}</option>`).join('')}</select></label><label>Minutes<select data-k="d">${[10,15,20,25,30,40].map(d=>`<option ${d==B.d?'selected':''}>${d}</option>`).join('')}</select></label></div>
 <button class="big" data-a="gen">Generate workout</button>
@@ -285,8 +292,16 @@ ${G?`<div class="card"><h3>About ${est(G)} min</h3>${G.map(row).join('')}<div cl
 const ex=()=>`<h1>Exercises</h1><div class="chips">${['all','upper','chest','back','shoulders','arms','legs','core'].map(g=>`<button class="chip" aria-pressed="${g==F}" data-a="filt" data-v="${g}">${g}</button>`).join('')}</div>
 <div class="card">${Object.keys(E).filter(i=>F=='all'||(FM[F]||[F]).includes(E[i].g)).map(i=>`<div class="li" style="${av(i)?'':'opacity:.5'}"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}<br><span class="m">${E[i].g}, ${['','beginner','intermediate'][E[i].d]}${av(i)?'':', needs '+EQ[E[i].q].toLowerCase()}</span></button></div>`).join('')}</div>`;
 
+const wtCard=()=>{const a=S.w,n=a.length,l=a[n-1],r=a.slice(-30);let ch='';
+if(r.length>1){const ks=r.map(e=>e.kg),lo=Math.min(...ks),hi=Math.max(...ks),sp=hi-lo||1,pt=r.map((e,i)=>[10+i/(r.length-1)*280,75-(e.kg-lo)/sp*60]);
+ch=`<svg viewBox="0 0 300 90" style="width:100%;height:auto;margin-top:12px" role="img" aria-label="Weight trend over your last ${r.length} entries, from ${r[0].kg} to ${l.kg} kilograms"><polyline points="${pt.map(q=>q.join(',')).join(' ')}" fill="none" stroke="var(--a)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pt.at(-1)[0]}" cy="${pt.at(-1)[1]}" r="5" fill="var(--g)"/></svg><p class="m">Low ${lo} kg, high ${hi} kg</p>`}
+const dl=n>1?Math.round((l.kg-a[n-2].kg)*10)/10:0;
+return `<div class="card"><h3>Body weight</h3>${n?`<span class="wn">${l.kg}</span> kg<p class="m">${n>1?(dl>0?'+':'')+dl+' kg since '+fmtD(a[n-2].d):'First entry, '+fmtD(l.d)}</p>`:'<p class="m">Log your weight to see your trend.</p>'}${ch}
+<label style="margin-top:14px">Weight today (kg)<input class="fld" id="wt" type="number" inputmode="decimal" step="0.1" min="20" max="400" placeholder="${n?l.kg:'e.g. 62.5'}"></label><button class="big" data-a="logw">Log weight</button>
+${a.slice(-5).reverse().map(e=>`<div class="li"><span>${e.kg} kg</span><span class="m">${fmtD(e.d)}</span><button class="ghost" data-a="delw" data-v="${e.d}" aria-label="Delete ${e.kg} kg entry from ${fmtD(e.d)}">✕</button></div>`).join('')}</div>`};
 const stats=()=>{const h=S.hist,sets=h.flatMap(x=>x.logs),m=mon(),wks=[5,4,3,2,1,0].map(k=>h.filter(x=>x.d>=m-k*6048e5&&x.d<m-(k-1)*6048e5).length);
 return `<h1>Progress</h1><div class="grid"><div class="card"><p class="m">Workouts</p><span class="n">${h.length}</span></div><div class="card"><p class="m">Sets</p><span class="n">${sets.length}</span></div><div class="card"><p class="m">Total reps</p><span class="n">${sets.reduce((t,s)=>t+s.reps,0)}</span></div></div>
+${wtCard()}
 <div class="card"><h3>Workouts per week</h3><div class="bars" role="img" aria-label="Workouts in the last 6 weeks: ${wks.join(', ')}">${wks.map(n=>`<i style="height:${n*30+4}px" title="${n}"></i>`).join('')}</div></div>
 <div class="card"><h3>Personal bests</h3>${Object.keys(S.pr).map(i=>`<div class="li"><span>${E[i].n}</span><b class="pr">${S.pr[i]} reps</b></div>`).join('')||'<p class="m">Your bests appear here after your first workout.</p>'}</div>
 <div class="card"><h3>Recent</h3>${[...h].reverse().slice(0,8).map(x=>`<div class="li"><span>${x.day?'Day '+x.day:'Custom'}, ${x.logs.length} sets</span><span class="m">${fmtD(x.d)}, ${x.dur} min</span></div>`).join('')||'<p class="m">Nothing logged yet.</p>'}</div>`};
@@ -306,7 +321,7 @@ let CF;const ask=(t,b,ok,no,fn)=>{CF=fn;dlg.innerHTML=`<h2>${t}</h2><p class="m"
 const toast=m=>{const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2000)};
 const cnt=()=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;document.querySelectorAll('.n').forEach(el=>{const t=+el.textContent;if(!t)return;const s=performance.now();(function f(n){const p=Math.min(1,(n-s)/600);el.textContent=Math.round(t*(1-(1-p)**3));if(p<1)requestAnimationFrame(f)})(s)})};
 const show=h=>{dlg.innerHTML=h+'<form method="dialog"><button class="big">Close</button></form>';dlg.showModal()};
-const det=id=>{const e=E[id];return `<h2>${e.n}</h2><p class="m">${e.g}, ${['','beginner','intermediate'][e.d]}, ${EQ[e.q]}${av(id)?'':' (turn it on in Profile)'}</p><p><b>${e.s} sets × ${e.lo}–${e.hi} reps</b>, rest ${e.r}s</p><ol>${e.h.split('. ').map(x=>`<li>${x.replace(/\.$/,'')}.</li>`).join('')}</ol><p class="m">Progress: add a rep each session until ${e.hi} on every set, then slow the lowering to 3 seconds.</p><a class="big" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' proper form')}" target="_blank" rel="noopener">Find a tutorial on YouTube</a>`};
+const det=id=>{const e=E[id];return `<h2>${e.n}</h2><p class="m">${e.g}, ${['','beginner','intermediate'][e.d]}, ${EQ[e.q]}${av(id)?'':' (turn it on in Profile)'}</p><p><b>${e.s} sets × ${e.lo}–${e.hi} reps</b>, rest ${e.r}s</p><ol>${e.h.split('. ').map(x=>`<li>${x.replace(/\.$/,'')}.</li>`).join('')}</ol><p class="m">Progress: add a rep each session until ${e.hi} on every set, then slow the lowering to 3 seconds.</p><a class="big" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' form #shorts')}" target="_blank" rel="noopener">Find a Short on YouTube</a>`};
 const swapUI=(id,cur)=>{const c=alts(id,cur);return `<h2>Swap ${E[id].n}</h2>${c.length?c.map(i=>{const same=E[i].p==E[id].p;return `<button class="opt" data-a="pick" data-v="${i}"><span><b>${E[i].n}</b><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></span><span class="tag${same?' same':''}">${same?'Same movement':'Same muscle'}</span></button>`}).join(''):'<p class="m">No other exercises for this muscle with your equipment.</p>'}`};
 
 const build=(f,d)=>{const gs=FM[f],n=Math.max(2,Math.round(d/5.5)),out=[];
@@ -315,12 +330,14 @@ const iso=i=>E[i].p=='iso'||E[i].g=='core';out.sort((a,b)=>iso(a)-iso(b));while(
 
 const I={swap:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></svg>',
 how:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>',
-play:'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'};
-// Video IDs by exercise id. Add 'exerciseId':'youtubeVideoId' to embed a tutorial; exercises without one get a YouTube search link.
-const YT={dip:'wjUmnZH528Y'};
-const vid=id=>{const v=$('#wv');if(v.dataset.id==id)return;v.dataset.id=id;const y=YT[id],n=E[id].n;
-v.innerHTML=y?`<div class="vp"><button class="vf" data-a="play" data-v="${y}" aria-label="Play tutorial video: ${n}"><img src="https://i.ytimg.com/vi/${y}/hqdefault.jpg" alt=""><i>${I.play}</i></button></div><p class="m yl"><a href="https://www.youtube.com/watch?v=${y}" target="_blank" rel="noopener">Video not loading? Open on YouTube</a></p>`
-:`<a class="vl" href="https://www.youtube.com/results?search_query=${encodeURIComponent(n+' proper form')}" target="_blank" rel="noopener">${I.play} Watch a form tutorial</a>`};
+play:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+link:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'};
+const YT={}; // optional built-ins, 'exerciseId':'shortsVideoId'. Links saved in the app (S.vids) win.
+let VP=0;
+const yid=id=>S.vids[id]||YT[id];
+const vid=id=>{const v=$('#wv');if(v.dataset.id==id)return;v.dataset.id=id;const y=yid(id),n=E[id].n;
+v.innerHTML=y?`<div class="vp"><button class="vf" data-a="play" data-v="${y}" aria-label="Play tutorial video: ${n}"><img src="https://i.ytimg.com/vi/${y}/hqdefault.jpg" alt=""><i>${I.play}</i></button></div><p class="m yl"><a href="https://www.youtube.com/shorts/${y}" target="_blank" rel="noopener">Open on YouTube</a><button class="lk" data-a="vset" data-v="${id}">Change</button></p>`
+:`<div class="vn"><p class="m">No Short saved for ${n} yet.</p><div class="acts"><a class="act" href="https://www.youtube.com/results?search_query=${encodeURIComponent(n+' form #shorts')}" target="_blank" rel="noopener">${I.play} Find a Short</a><button class="act" data-a="vset" data-v="${id}">${I.link} Paste link</button></div></div>`};
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const recalc=()=>{W.total=W.ids.reduce((t,i)=>t+E[i].s,0)};
 const wk=()=>{if(!W){w.hidden=true;w.innerHTML='';return}w.hidden=false;
@@ -337,8 +354,8 @@ $('#wt').innerHTML=`<div class="wh"><button class="ghost" data-a="quit" aria-lab
 (r?`<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="tr" cx="60" cy="60" r="54"/><circle class="pg" id="rg" cx="60" cy="60" r="54" stroke-dasharray="339.3" transform="rotate(-90 60 60)"/></svg><b id="rt" role="timer">${fmt(r.left)}</b></div>
 <div class="row"><button class="ghost" data-a="rt" data-v="-15">−15s</button><button class="ghost" data-a="rp" id="rpb">${r.pause?'Resume':'Pause'}</button><button class="ghost" data-a="rt" data-v="15">+15s</button></div><button class="big" id="nx" data-a="next">${r.over?'Next set':'Skip rest'}</button>`
 :`<div class="step"><button data-a="rep" data-v="-1" aria-label="One fewer rep">−</button><output id="rv" aria-live="polite">${W.reps}</output><button data-a="rep" data-v="1" aria-label="One more rep">+</button></div><p class="m" style="text-align:center">reps this set</p><button class="big" id="cs" data-a="done">Complete set</button>`);
-vid(id);
-$('#wb').innerHTML=`<div class="acts"><button class="act" data-a="howw">${I.how} How to</button><button class="act" data-a="sww">${I.swap} Swap</button></div>`;
+if(VP)vid(id);
+$('#wb').innerHTML=`<div class="acts"><button class="act" data-a="howw">${I.how} How to</button><button class="act" data-a="vp" aria-pressed="${!!VP}">${I.play} Video</button><button class="act" data-a="sww">${I.swap} Swap</button></div>`;
 [$('#wt'),$('#wb')].forEach(x=>{x.style.animation='none';void x.offsetWidth;x.style.animation='up .3s'});
 W.pw=W.logs.length/W.total*100;if(r)ring()};
 const ring=()=>{const r=W&&W.rest;if(!r||!$('#rg'))return;$('#rg').style.strokeDashoffset=339.3*(1-r.left/r.tot);$('#rt').textContent=fmt(r.left);$('#nx').textContent=r.over?'Next set':'Skip rest';$('.ring').classList.toggle('dn',!!r.over);$('#nx').classList.toggle('pulse',!!r.over)};
@@ -354,6 +371,10 @@ sww(){const id=W.ids[W.i];SW={w:1,day:W.day,i:W.i};show(swapUI(id,W.ids))},
 pick(n){toast('Swapped to '+E[n].n);if(SW.w){W.ids[W.i]=n;W.s=Math.min(W.s,E[n].s-1);W.reps=E[n].lo;recalc()}if(SW.day){S.prog[SW.day][SW.i]=n;save()}dlg.close();SW.w?wk():render()},
 pre(k){B.f=P[k][1];B.d=P[k][2];act.gen()},gen(){G=build(B.f,B.d);render(1);toast(`Built ${G.length} exercises, about ${est(G)} min`)},clr(){G=null;render(1)},
 start(x){const ids=x=='gen'?[...G]:[...S.prog[x]];W={ids,day:x=='gen'?0:x,i:0,s:0,reps:E[ids[0]].lo,logs:[],best:{},prs:new Set,start:Date.now()};recalc();wk()},
+vp(){VP=!VP;const v=$('#wv');if(VP)vid(W.ids[W.i]);else{v.innerHTML='';delete v.dataset.id}$('[data-a=vp]').setAttribute('aria-pressed',!!VP);if(VP&&v.scrollIntoView)v.scrollIntoView({block:'nearest',behavior:'smooth'})},
+vset(id){dlg.innerHTML=`<h2>Video for ${E[id].n}</h2><p class="m">Paste a YouTube Shorts link. Leave it empty to remove the saved one.</p><input class="fld" id="vl" type="url" inputmode="url" placeholder="https://youtube.com/shorts/..." value="${S.vids[id]?'https://youtube.com/shorts/'+S.vids[id]:''}"><div class="cfm"><button class="ghost" data-a="no">Cancel</button><button class="big" data-a="vsave" data-v="${id}">Save</button></div>`;dlg.showModal()},
+vsave(id){const t=$('#vl').value.trim(),m=t.match(/(?:shorts\/|[?&]v=|youtu\.be\/|embed\/)([\w-]{11})/);if(t&&!m){toast('That is not a YouTube link');return}
+if(m)S.vids[id]=m[1];else delete S.vids[id];save();dlg.close();const v=$('#wv');if(v)delete v.dataset.id;if(W&&!W.fin&&VP)vid(W.ids[W.i])},
 play(y){$('#wv .vp').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${y}?autoplay=1&rel=0&playsinline=1" title="Exercise tutorial" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`},
 how:id=>show(det(id)),howw(){show(det(W.ids[W.i]))},
 rep(x){W.reps=Math.max(0,W.reps+ +x);const o=$('#rv');o.textContent=W.reps;o.classList.remove('bump');void o.offsetWidth;o.classList.add('bump');hap(8)},
@@ -370,9 +391,12 @@ quit(){ask('End this workout?','Sets so far will not be saved.','End workout','K
 yes(){dlg.close();CF&&CF()},no(){dlg.close()},
 close(){W=null;wk();v='home';render()},
 reset(){ask('Erase everything?','All workouts, records and settings on this device will be deleted.','Erase','Cancel',()=>{try{localStorage.removeItem(K)}catch{}location.reload()})},
+logw(){const kg=Math.round(parseFloat($('#wt').value)*10)/10;if(!(kg>=20&&kg<=400)){toast('Enter your weight in kg');return}const day=new Date().toDateString();S.w=S.w.filter(e=>new Date(e.d).toDateString()!=day);S.w.push({d:Date.now(),kg});save();render();toast('Weight logged')},
+delw(x){S.w=S.w.filter(e=>e.d!=+x);save();render()},
 signin(){signInWithGoogle().then(()=>{gate();toast('Signed in')}).catch(e=>{console.warn('Sign in failed',e);toast('Sign in failed: '+(e.code||e.message||'error'))})},
 skip(){gate()},
 signout(){signOutGoogle().then(()=>{if(unsub){unsub();unsub=null}render(1);toast('Signed out')}).catch(e=>{console.warn('Sign out failed',e);toast('Sign out failed')})}};
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='wt')act.logw()});
 document.onclick=e=>{const b=e.target.closest('[data-a]');if(b)act[b.dataset.a](b.dataset.v)};
 document.onchange=e=>{const t=e.target,k=t.dataset.k;if(k=='eq'){S.eq[t.value]=t.checked?1:0;fix();save();render();toast('Program updated')}else if(k)B[k]=k=='d'?+t.value:t.value};
 // Login page shows once: until the user signs in or skips, then never again on this device.

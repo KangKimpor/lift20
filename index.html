@@ -37,7 +37,19 @@ nav button{flex:1;min-height:52px;background:none;border:0;border-radius:14px;co
 .ring{position:relative;width:220px;margin:12px auto}.ring svg{width:100%}.ring circle{fill:none;stroke-width:7}.tr{stroke:var(--s2)}.pg{stroke:var(--a);stroke-linecap:round;transition:stroke-dashoffset .3s linear}.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:3rem;font-weight:800}
 .bars{display:flex;gap:8px;align-items:flex-end;height:90px}.bars i{flex:1;background:var(--a);border-radius:8px 8px 0 0;min-height:4px}
 dialog{width:min(520px,92vw);max-height:86vh;background:var(--s);color:var(--t);border:0;border-radius:24px;padding:20px}dialog::backdrop{background:#0009}
-dialog ol{padding-left:20px}.pr{color:var(--g);font-weight:800}
+dialog ol{padding-left:20px}
+.cfm{display:flex;gap:10px;margin-top:20px}.cfm>*{flex:1;margin:0;min-height:56px;border-radius:18px;font-weight:800;font-size:1.05rem;padding:0 12px}
+.act,.sw{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--s2);font-weight:700;transition:transform .12s,background .2s,color .2s}
+.acts{display:flex;gap:10px;margin-top:14px}.act{flex:1;min-height:52px;border-radius:16px}.sw{flex:none;min-height:44px;padding:0 16px;border-radius:99px}
+.act:active,.sw:active,.opt:active{transform:scale(.96)}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;margin-top:10px;padding:12px 16px;border:1px solid var(--s2);border-radius:16px;background:transparent;text-align:left;transition:transform .12s,border-color .2s}.opt .m{display:block;font-weight:400}
+.tag{flex:none;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--s2)}.tag.same{background:var(--g);color:var(--on)}
+.vp{position:relative;aspect-ratio:16/9;max-width:calc(36vh*16/9);margin:16px auto 0;border-radius:18px;overflow:hidden;background:var(--s2)}
+.vp iframe,.vp img,.vf{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:none;object-fit:cover}
+.vf i{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px;border-radius:50%;background:var(--a);color:var(--on);display:grid;place-items:center}
+.yl{text-align:center;font-size:.85rem}.yl a{color:inherit}
+.vl{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;margin-top:16px;border:1px solid var(--s2);border-radius:16px;font-weight:700;text-decoration:none;color:inherit}
+@media(hover:hover){.act:hover,.sw:hover{background:var(--a);color:var(--on)}.opt:hover,.vl:hover{border-color:var(--a)}}.pr{color:var(--g);font-weight:800}
 .cf{position:fixed;top:-10px;width:9px;height:14px;border-radius:2px;animation:fall 1.8s ease-in forwards;pointer-events:none}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
 :focus-visible{outline:3px solid var(--g);outline-offset:2px}
 /* ---- feedback motion (all disabled by the reduced-motion rule below) ---- */
@@ -91,7 +103,7 @@ main.v-prog{grid-template-columns:repeat(3,minmax(0,1fr))}
 main.v-prog>.card:nth-of-type(-n+3){grid-column:auto}
 main.v-prog>.row,.v-prog>.big{grid-column:1/3;max-width:none}
 main.v-prog>.big{grid-column:1/2;margin:0}
-main.v-prog .li .ghost{flex:none;min-width:72px}
+
 /* exercises */
 main.v-ex>.card{columns:2;column-gap:40px}.v-ex .li{break-inside:avoid}
 /* progress */
@@ -215,7 +227,25 @@ bic|Bicycle Crunch|core|core|bw|1|3|12|20|45|Hands behind your head. Bring oppos
 rt|DB Russian Twist|core|core|db|1|3|12|20|45|Sit leaning back with feet down. Rotate the dumbbell side to side with your torso.
 pup|Pull-ups|back|pull|bar|2|3|4|10|90|Hang with hands just past shoulder width. Pull chest toward the bar. Lower fully.
 chin|Chin-ups|back|pull|bar|2|3|4|10|90|Palms facing you. Pull your chin over the bar. Lower slowly.
-hkr|Hanging Knee Raise|core|core|bar|2|3|8|12|60|Hang from the bar. Raise knees to chest without swinging. Lower slowly.`;
+hkr|Hanging Knee Raise|core|core|bar|2|3|8|12|60|Hang from the bar. Raise knees to chest without swinging. Lower slowly.
+tpu|Tempo Push-ups|chest|push|bw|1|3|6|12|75|Start in a straight plank with hands under your shoulders. Lower for 3 seconds until your chest is just above the floor. Press up in one smooth motion.
+apu|Archer Push-ups|chest|push|bw|2|3|4|8|90|Set your hands wide with both arms straight. Bend one elbow and shift your weight to that side while the other arm stays long. Press back to the middle and switch sides each rep.
+dbpu|DB Push-ups|chest|push|db|2|3|6|12|75|Grip two dumbbells set flat on the floor, shoulder width apart. Lower your chest until it is level with your hands. Press up with your wrists straight.
+sfp|Single-Arm DB Floor Press|chest|push|db|2|3|8|12|75|Lie on your back with one dumbbell above your chest and the other arm resting on the floor. Lower the elbow until it touches the floor. Press up without letting your torso twist.
+kick|DB Kickback|triceps|iso|db|1|3|10|15|60|Hinge forward with a flat back and your upper arms tight against your sides. Straighten your elbows until your arms are in line with your back. Lower slowly without swinging.
+tate|Tate Press|triceps|iso|db|2|3|8|12|60|Lie on your back holding both dumbbells above your chest with palms facing your feet. Bend your elbows out to the sides and lower the weights toward your chest. Press back up by straightening your elbows.
+udip|Upright Dips|triceps|push|dip|2|3|6|12|90|Support yourself on the bars with your torso upright and elbows pointing back. Lower until your elbows reach about 90 degrees. Press up without leaning forward.
+sup|Superman|back|iso|bw|1|3|10|15|60|Lie face down with your arms extended in front. Lift your arms, chest and legs slightly off the floor. Hold for one second, then lower.
+rrow|Renegade Row|back|pull|db|2|3|6|10|90|Hold a plank with your hands on two dumbbells and your feet wide. Row one dumbbell to your hip while keeping your hips level. Lower it and switch sides.
+uhr|Underhand DB Row|back|pull|db|1|3|10|15|75|Hinge forward with a flat back and palms facing forward. Row the dumbbells toward your hips with your elbows close. Lower under control.
+pike|Pike Push-ups|shoulders|push|bw|2|3|5|10|75|Start in an inverted V with your hips high and hands under your shoulders. Bend your elbows to lower the top of your head toward the floor. Press back up to straight arms.
+fr|DB Front Raise|shoulders|iso|db|1|3|10|15|60|Stand tall with a dumbbell in each hand in front of your thighs. Raise both arms to shoulder height with soft elbows. Lower slowly without leaning back.
+uprow|DB Upright Row|shoulders|pull|db|1|3|10|15|60|Stand holding the dumbbells in front of your thighs. Pull them up toward your chest with your elbows leading, no higher than shoulder height. Lower slowly.
+cuban|Cuban Press|shoulders|push|db|2|3|8|12|75|Hold the dumbbells in front of your thighs. Pull them up with your elbows high, rotate your forearms upward, then press overhead. Reverse the movement to lower.
+ptr|Prone T Raise|shoulders|iso|bw|1|3|10|15|60|Lie face down with your arms out to the sides in a T shape. Lift your arms off the floor by squeezing your shoulder blades together. Hold for one second, then lower.
+xham|Cross-Body Hammer Curl|biceps|iso|db|1|3|10|15|60|Stand with the dumbbells at your sides and palms facing in. Curl one dumbbell across your body toward the opposite shoulder. Lower slowly and alternate arms.
+rcurl|Reverse Curl|biceps|iso|db|1|3|10|15|60|Stand with palms facing down and elbows tight to your sides. Curl the dumbbells up without letting your wrists bend. Lower slowly.
+tcurl|Tempo Curl|biceps|iso|db|1|3|8|12|60|Stand tall with palms facing forward. Curl up in one second. Lower for 3 seconds.`;
 const E={};L.split('\n').forEach(l=>{const[id,n,g,p,q,d,s,lo,hi,r,h]=l.split('|');E[id]={id,n,g,p,q,d:+d,s:+s,lo:+lo,hi:+hi,r:+r,h}});
 const DAY=['A','B','C'],EQ={bw:'Bodyweight',db:'2 × 7 kg dumbbells',dip:'Dip station',bar:'Pull-up bar'};
 const FM={full:['legs','chest','back','shoulders','core'],upper:['chest','back','shoulders','biceps','triceps'],lower:['legs','core'],chest:['chest','triceps'],back:['back','biceps'],shoulders:['shoulders'],arms:['biceps','triceps'],legs:['legs'],core:['core']};
@@ -246,14 +276,14 @@ return `<p class="m">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening
 <div class="card"><p class="m">Last workout</p>${last?`<b>${last.day?'Day '+last.day:'Custom'}</b>, ${last.dur} min<br><span class="m">${fmtD(last.d)}</span>`:'<span class="m">None yet</span>'}</div>
 <div class="card"><p class="m">Next goal</p>${b?`Beat ${S.pr[b]} reps on ${E[b].n}`:'Finish your first workout to set records'}</div></div>`};
 
-const plan=()=>`<h1>Workouts</h1><h2>My program</h2>${DAY.map(d=>`<div class="card"><h3>Day ${d}, about ${est(S.prog[d])} min</h3>${S.prog[d].map((i,k)=>`<div class="li"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}</button><button class="ghost" data-a="swap" data-v="${d}${k}" aria-label="Swap ${E[i].n}">Swap</button></div>`).join('')}<button class="big" data-a="start" data-v="${d}">Start day ${d}</button></div>`).join('')}
+const plan=()=>`<h1>Workouts</h1><h2>My program</h2>${DAY.map(d=>`<div class="card"><h3>Day ${d}, about ${est(S.prog[d])} min</h3>${S.prog[d].map((i,k)=>`<div class="li"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}</button><button class="sw" data-a="swap" data-v="${d}${k}" aria-label="Swap ${E[i].n}">${I.swap} Swap</button></div>`).join('')}<button class="big" data-a="start" data-v="${d}">Start day ${d}</button></div>`).join('')}
 <h2>Build a workout</h2><div class="chips">${P.map((p,k)=>`<button class="chip" data-a="pre" data-v="${k}">${p[0]}</button>`).join('')}</div>
 <div class="row"><label>Focus<select data-k="f">${Object.keys(FM).map(f=>`<option ${f==B.f?'selected':''}>${f}</option>`).join('')}</select></label><label>Minutes<select data-k="d">${[10,15,20,25,30,40].map(d=>`<option ${d==B.d?'selected':''}>${d}</option>`).join('')}</select></label></div>
 <button class="big" data-a="gen">Generate workout</button>
 ${G?`<div class="card"><h3>About ${est(G)} min</h3>${G.map(row).join('')}<div class="row"><button class="big" data-a="start" data-v="gen">Start</button><button class="ghost" data-a="gen">Shuffle</button><button class="ghost" data-a="clr">Reset to program</button></div></div>`:''}`;
 
-const ex=()=>`<h1>Exercises</h1><div class="chips">${['all',...Object.keys(FM).slice(1,5).concat(['legs','core']).filter(x=>x!='lower')].map(g=>`<button class="chip" aria-pressed="${g==F}" data-a="filt" data-v="${g}">${g}</button>`).join('')}</div>
-<div class="card">${Object.keys(E).filter(i=>F=='all'||E[i].g==F||(F=='upper'&&0)).map(i=>`<div class="li" style="${av(i)?'':'opacity:.5'}"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}<br><span class="m">${E[i].g}, ${['','beginner','intermediate'][E[i].d]}${av(i)?'':', needs '+EQ[E[i].q].toLowerCase()}</span></button></div>`).join('')}</div>`;
+const ex=()=>`<h1>Exercises</h1><div class="chips">${['all','upper','chest','back','shoulders','arms','legs','core'].map(g=>`<button class="chip" aria-pressed="${g==F}" data-a="filt" data-v="${g}">${g}</button>`).join('')}</div>
+<div class="card">${Object.keys(E).filter(i=>F=='all'||(FM[F]||[F]).includes(E[i].g)).map(i=>`<div class="li" style="${av(i)?'':'opacity:.5'}"><button class="lnk" data-a="det" data-v="${i}">${E[i].n}<br><span class="m">${E[i].g}, ${['','beginner','intermediate'][E[i].d]}${av(i)?'':', needs '+EQ[E[i].q].toLowerCase()}</span></button></div>`).join('')}</div>`;
 
 const stats=()=>{const h=S.hist,sets=h.flatMap(x=>x.logs),m=mon(),wks=[5,4,3,2,1,0].map(k=>h.filter(x=>x.d>=m-k*6048e5&&x.d<m-(k-1)*6048e5).length);
 return `<h1>Progress</h1><div class="grid"><div class="card"><p class="m">Workouts</p><span class="n">${h.length}</span></div><div class="card"><p class="m">Sets</p><span class="n">${sets.length}</span></div><div class="card"><p class="m">Total reps</p><span class="n">${sets.reduce((t,s)=>t+s.reps,0)}</span></div></div>
@@ -272,32 +302,44 @@ const V={home,prog:plan,ex,stats,me};
 const render=e=>{app.className='v-'+v+(e?' enter':'');app.innerHTML=V[v]();cnt();document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v==v))};
 
 const hap=n=>navigator.vibrate&&navigator.vibrate(n);
+let CF;const ask=(t,b,ok,no,fn)=>{CF=fn;dlg.innerHTML=`<h2>${t}</h2><p class="m">${b}</p><div class="cfm"><button class="ghost" data-a="no">${no}</button><button class="big" data-a="yes">${ok}</button></div>`;dlg.showModal()};
 const toast=m=>{const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2000)};
 const cnt=()=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;document.querySelectorAll('.n').forEach(el=>{const t=+el.textContent;if(!t)return;const s=performance.now();(function f(n){const p=Math.min(1,(n-s)/600);el.textContent=Math.round(t*(1-(1-p)**3));if(p<1)requestAnimationFrame(f)})(s)})};
 const show=h=>{dlg.innerHTML=h+'<form method="dialog"><button class="big">Close</button></form>';dlg.showModal()};
 const det=id=>{const e=E[id];return `<h2>${e.n}</h2><p class="m">${e.g}, ${['','beginner','intermediate'][e.d]}, ${EQ[e.q]}${av(id)?'':' (turn it on in Profile)'}</p><p><b>${e.s} sets × ${e.lo}–${e.hi} reps</b>, rest ${e.r}s</p><ol>${e.h.split('. ').map(x=>`<li>${x.replace(/\.$/,'')}.</li>`).join('')}</ol><p class="m">Progress: add a rep each session until ${e.hi} on every set, then slow the lowering to 3 seconds.</p><a class="big" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' proper form')}" target="_blank" rel="noopener">Find a tutorial on YouTube</a>`};
-const swapUI=(id,cur)=>{const c=alts(id,cur);return `<h2>Swap ${E[id].n}</h2>${c.length?c.map(i=>`<div class="li"><button class="lnk" data-a="pick" data-v="${i}">${E[i].n}<br><span class="m">${E[i].p==E[id].p?'Same movement':'Same muscle'}, ${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></button></div>`).join(''):'<p class="m">No other exercises for this muscle with your equipment.</p>'}`};
+const swapUI=(id,cur)=>{const c=alts(id,cur);return `<h2>Swap ${E[id].n}</h2>${c.length?c.map(i=>{const same=E[i].p==E[id].p;return `<button class="opt" data-a="pick" data-v="${i}"><span><b>${E[i].n}</b><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></span><span class="tag${same?' same':''}">${same?'Same movement':'Same muscle'}</span></button>`}).join(''):'<p class="m">No other exercises for this muscle with your equipment.</p>'}`};
 
 const build=(f,d)=>{const gs=FM[f],n=Math.max(2,Math.round(d/5.5)),out=[];
 for(let k=0;out.length<n&&k<n*4;k++){const c=Object.keys(E).filter(i=>av(i)&&E[i].g==gs[k%gs.length]&&!out.includes(i)),f2=c.filter(i=>!out.some(o=>E[o].g==E[i].g&&E[o].p==E[i].p)),a=f2.length?f2:c;if(a.length)out.push(a[Math.random()*a.length|0])}
 const iso=i=>E[i].p=='iso'||E[i].g=='core';out.sort((a,b)=>iso(a)-iso(b));while(est(out)>d+3&&out.length>2)out.pop();return out};
 
+const I={swap:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></svg>',
+how:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>',
+play:'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'};
+// Video IDs by exercise id. Add 'exerciseId':'youtubeVideoId' to embed a tutorial; exercises without one get a YouTube search link.
+const YT={dip:'wjUmnZH528Y'};
+const vid=id=>{const v=$('#wv');if(v.dataset.id==id)return;v.dataset.id=id;const y=YT[id],n=E[id].n;
+v.innerHTML=y?`<div class="vp"><button class="vf" data-a="play" data-v="${y}" aria-label="Play tutorial video: ${n}"><img src="https://i.ytimg.com/vi/${y}/hqdefault.jpg" alt=""><i>${I.play}</i></button></div><p class="m yl"><a href="https://www.youtube.com/watch?v=${y}" target="_blank" rel="noopener">Video not loading? Open on YouTube</a></p>`
+:`<a class="vl" href="https://www.youtube.com/results?search_query=${encodeURIComponent(n+' proper form')}" target="_blank" rel="noopener">${I.play} Watch a form tutorial</a>`};
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const recalc=()=>{W.total=W.ids.reduce((t,i)=>t+E[i].s,0)};
-const wk=()=>{if(!W){w.hidden=true;return}w.hidden=false;
+const wk=()=>{if(!W){w.hidden=true;w.innerHTML='';return}w.hidden=false;
 if(W.fin){const by={};W.logs.forEach(l=>(by[l.id]=by[l.id]||[]).push(l.reps));
 w.innerHTML=`<div><h1>Workout complete</h1><div class="grid"><div class="card"><span class="n">${W.fin}</span> min</div><div class="card"><span class="n">${W.logs.length}</span> sets</div><div class="card"><span class="n">${W.logs.reduce((t,l)=>t+l.reps,0)}</span> reps</div></div>
 <div class="card"><h3>Highlights</h3>${Object.keys(by).map(i=>`<div class="li"><span>${E[i].n}</span><b>${by[i].join(' / ')}</b></div>`).join('')}</div>
 ${W.prs.size?`<div class="card"><h3 class="pr">New personal bests</h3>${[...W.prs].map(i=>`<p>${E[i].n}: ${W.best[i]} reps</p>`).join('')}</div>`:''}
 <p class="m">This week: ${wkDone().size} of 3 workouts</p><button class="big" data-a="close">Done</button></div>`;
 cnt();for(let k=0;k<26;k++){const s=document.createElement('i');s.className='cf';s.style.cssText=`left:${Math.random()*100}vw;background:var(--${['a','g','ok','m'][k%4]});animation-delay:${Math.random()*.5}s`;w.append(s);setTimeout(()=>s.remove(),2600)}return}
+if(!$('#wt'))w.innerHTML='<div><div id="wt"></div><div id="wv"></div><div id="wb"></div></div>';
 const id=W.ids[W.i],e=E[id],r=W.rest;
-w.innerHTML=`<div><div class="wh"><button class="ghost" data-a="quit" aria-label="End workout">✕</button><span>Exercise ${W.i+1} of ${W.ids.length}</span></div><div class="bar"><i style="width:${W.logs.length/W.total*100}%;--f:${W.pw||0}%"></i></div>
+$('#wt').innerHTML=`<div class="wh"><button class="ghost" data-a="quit" aria-label="End workout">✕</button><span>Exercise ${W.i+1} of ${W.ids.length}</span></div><div class="bar"><i style="width:${W.logs.length/W.total*100}%;--f:${W.pw||0}%"></i></div>
 <h1>${e.n}</h1><p class="m">Target ${e.s} × ${e.lo}–${e.hi}, set ${W.s+1} of ${e.s}${S.pr[id]?`, best ${S.pr[id]}`:''}</p>`+
 (r?`<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="tr" cx="60" cy="60" r="54"/><circle class="pg" id="rg" cx="60" cy="60" r="54" stroke-dasharray="339.3" transform="rotate(-90 60 60)"/></svg><b id="rt" role="timer">${fmt(r.left)}</b></div>
 <div class="row"><button class="ghost" data-a="rt" data-v="-15">−15s</button><button class="ghost" data-a="rp" id="rpb">${r.pause?'Resume':'Pause'}</button><button class="ghost" data-a="rt" data-v="15">+15s</button></div><button class="big" id="nx" data-a="next">${r.over?'Next set':'Skip rest'}</button>`
-:`<div class="step"><button data-a="rep" data-v="-1" aria-label="One fewer rep">−</button><output id="rv" aria-live="polite">${W.reps}</output><button data-a="rep" data-v="1" aria-label="One more rep">+</button></div><p class="m" style="text-align:center">reps this set</p><button class="big" id="cs" data-a="done">Complete set</button>`)+
-`<div class="row" style="margin-top:14px"><button class="ghost" data-a="howw">How to</button><button class="ghost" data-a="sww">Swap</button></div></div>`;
+:`<div class="step"><button data-a="rep" data-v="-1" aria-label="One fewer rep">−</button><output id="rv" aria-live="polite">${W.reps}</output><button data-a="rep" data-v="1" aria-label="One more rep">+</button></div><p class="m" style="text-align:center">reps this set</p><button class="big" id="cs" data-a="done">Complete set</button>`);
+vid(id);
+$('#wb').innerHTML=`<div class="acts"><button class="act" data-a="howw">${I.how} How to</button><button class="act" data-a="sww">${I.swap} Swap</button></div>`;
+[$('#wt'),$('#wb')].forEach(x=>{x.style.animation='none';void x.offsetWidth;x.style.animation='up .3s'});
 W.pw=W.logs.length/W.total*100;if(r)ring()};
 const ring=()=>{const r=W&&W.rest;if(!r||!$('#rg'))return;$('#rg').style.strokeDashoffset=339.3*(1-r.left/r.tot);$('#rt').textContent=fmt(r.left);$('#nx').textContent=r.over?'Next set':'Skip rest';$('.ring').classList.toggle('dn',!!r.over);$('#nx').classList.toggle('pulse',!!r.over)};
 const beep=()=>{try{navigator.vibrate&&navigator.vibrate(200);const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.value=.05;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.25)}catch{}};
@@ -312,6 +354,7 @@ sww(){const id=W.ids[W.i];SW={w:1,day:W.day,i:W.i};show(swapUI(id,W.ids))},
 pick(n){toast('Swapped to '+E[n].n);if(SW.w){W.ids[W.i]=n;W.s=Math.min(W.s,E[n].s-1);W.reps=E[n].lo;recalc()}if(SW.day){S.prog[SW.day][SW.i]=n;save()}dlg.close();SW.w?wk():render()},
 pre(k){B.f=P[k][1];B.d=P[k][2];act.gen()},gen(){G=build(B.f,B.d);render(1);toast(`Built ${G.length} exercises, about ${est(G)} min`)},clr(){G=null;render(1)},
 start(x){const ids=x=='gen'?[...G]:[...S.prog[x]];W={ids,day:x=='gen'?0:x,i:0,s:0,reps:E[ids[0]].lo,logs:[],best:{},prs:new Set,start:Date.now()};recalc();wk()},
+play(y){$('#wv .vp').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${y}?autoplay=1&rel=0&playsinline=1" title="Exercise tutorial" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`},
 how:id=>show(det(id)),howw(){show(det(W.ids[W.i]))},
 rep(x){W.reps=Math.max(0,W.reps+ +x);const o=$('#rv');o.textContent=W.reps;o.classList.remove('bump');void o.offsetWidth;o.classList.add('bump');hap(8)},
 done(){if(W.busy)return;W.busy=1;const e=E[W.ids[W.i]],r=W.reps,b=Math.max(S.pr[e.id]||0,W.best[e.id]||0),pr=S.pr[e.id]&&r>b;
@@ -323,9 +366,10 @@ W.rest={left:e.r,tot:e.r,end:Date.now()+e.r*1e3};wk();tick()},550)},
 rt(x){const r=W.rest;x=+x;r.tot=Math.max(15,r.tot+x);if(r.pause)r.left=Math.max(1,r.left+x);else{r.end+=x*1e3;r.left=Math.max(1,Math.ceil((r.end-Date.now())/1e3))}r.over=0;ring()},
 rp(){const r=W.rest;if(r.pause){r.pause=0;r.end=Date.now()+r.left*1e3}else r.pause=1;$('#rpb').textContent=r.pause?'Resume':'Pause'},
 next(){W.rest=null;wk()},
-quit(){if(confirm('End this workout? Sets so far will not be saved.')){clearInterval(T);W=null;wk()}},
+quit(){ask('End this workout?','Sets so far will not be saved.','End workout','Keep going',()=>{clearInterval(T);W=null;wk()})},
+yes(){dlg.close();CF&&CF()},no(){dlg.close()},
 close(){W=null;wk();v='home';render()},
-reset(){if(confirm('Erase all workouts, records and settings?')){try{localStorage.removeItem(K)}catch{}location.reload()}},
+reset(){ask('Erase everything?','All workouts, records and settings on this device will be deleted.','Erase','Cancel',()=>{try{localStorage.removeItem(K)}catch{}location.reload()})},
 signin(){signInWithGoogle().then(()=>{gate();toast('Signed in')}).catch(e=>{console.warn('Sign in failed',e);toast('Sign in failed: '+(e.code||e.message||'error'))})},
 skip(){gate()},
 signout(){signOutGoogle().then(()=>{if(unsub){unsub();unsub=null}render(1);toast('Signed out')}).catch(e=>{console.warn('Sign out failed',e);toast('Sign out failed')})}};

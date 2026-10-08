@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Lift20</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -16,7 +16,7 @@ h1{font-size:2.4rem;line-height:1.05;margin:.2em 0 .4em;font-weight:800;letter-s
 .hero{background:linear-gradient(160deg,var(--s2),var(--s))}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.grid .card{margin:0}
 button,select,a.big{font:inherit;color:inherit}
-button{cursor:pointer;touch-action:manipulation}
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}input,select,textarea{font-size:max(16px,1em)}button{cursor:pointer;touch-action:manipulation}
 .big{display:block;width:100%;min-height:56px;margin-top:12px;border:0;border-radius:18px;background:var(--a);color:var(--on);font-weight:800;font-size:1.1rem;text-align:center;text-decoration:none;padding:15px;transition:transform .12s,background .2s}
 .big:active{transform:scale(.97)}.big.ok{background:var(--ok)}
 .ghost{min-height:48px;padding:0 16px;border:1px solid var(--s2);border-radius:14px;background:transparent}
@@ -41,7 +41,7 @@ dialog ol{padding-left:20px}
 .cfm{display:flex;gap:10px;margin-top:20px}.cfm>*{flex:1;margin:0;min-height:56px;border-radius:18px;font-weight:800;font-size:1.05rem;padding:0 12px}
 .act,.sw{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--s2);font-weight:700;transition:transform .12s,background .2s,color .2s}
 .acts{display:flex;gap:10px;margin-top:14px}.act{flex:1;min-height:52px;border-radius:16px}.sw{flex:none;min-height:44px;padding:0 16px;border-radius:99px}
-.act:active,.sw:active,.opt:active{transform:scale(.96)}.rb{display:flex;align-items:center;gap:8px;flex:none}.del{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--s2);color:inherit;font:inherit;transition:transform .12s,background .2s,color .2s}.del:active{transform:scale(.92)}.ghost.add{display:block;width:100%;margin-top:12px}#dlg h3{margin:18px 0 0;text-transform:capitalize}
+.act:active,.sw:active,.opt:active{transform:scale(.96)}.hs{display:grid;grid-template-columns:minmax(0,1fr) 44px 52px 44px 44px;align-items:center;gap:8px;min-height:52px}.hs button{width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--s2);color:inherit;font:inherit;font-size:1.3rem}.hs b{text-align:center;font-size:1.2rem;font-variant-numeric:tabular-nums}.hs button:active{transform:scale(.92)}.rb{display:flex;align-items:center;gap:8px;flex:none}.del{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--s2);color:inherit;font:inherit;transition:transform .12s,background .2s,color .2s}.del:active{transform:scale(.92)}.ghost.add{display:block;width:100%;margin-top:12px}#dlg h3{margin:18px 0 0;text-transform:capitalize}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;margin-top:10px;padding:12px 16px;border:1px solid var(--s2);border-radius:16px;background:transparent;text-align:left;transition:transform .12s,border-color .2s}.opt .m{display:block;font-weight:400}
 .tag{flex:none;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--s2)}.tag.same{background:var(--g);color:var(--on)}
 .vp{position:relative;aspect-ratio:9/16;height:min(56vh,440px);margin:16px auto 0;border-radius:18px;overflow:hidden;background:var(--s2)}
@@ -172,9 +172,9 @@ const mergeData=(loc,clr)=>{
   if(!clr||!Array.isArray(clr.hist))return loc;
   if(!loc||!Array.isArray(loc.hist))return clr;
   const out=JSON.parse(JSON.stringify(loc));
-  out.hist=(clr.hist.length>loc.hist.length?clr:loc).hist.slice();
-  out.pr=Object.assign({},loc.pr||{},clr.pr||{});
-  for(const k in out.pr)out.pr[k]=Math.max((loc.pr&&loc.pr[k])||0,(clr.pr&&clr.pr[k])||0);
+  // ponytail: deleted workouts are remembered by timestamp (hdel) so a stale device cannot bring them back; edits to equal-length histories are won by whichever device syncs last.
+  out.hdel=[...new Set([...(loc.hdel||[]),...(clr.hdel||[])])];const fl=h=>h.filter(x=>!out.hdel.includes(x.d)),a=fl(loc.hist),b=fl(clr.hist);
+  out.hist=(b.length>a.length?b:a).slice();out.pr={};for(const h of out.hist)for(const l of h.logs)out.pr[l.id]=Math.max(out.pr[l.id]||0,l.reps);
   // ponytail: weights union by timestamp and saved video links union by exercise; a weight deleted on one device can come back from another until it is deleted there too.
   const wm={};[...(loc.w||[]),...(clr.w||[])].forEach(e=>wm[e.d]=e);out.w=Object.values(wm).sort((a,b)=>a.d-b.d);
   out.vids=Object.assign({},clr.vids||{},loc.vids||{});
@@ -264,11 +264,11 @@ S=S||{prog:{A:['dip','gob','ohrow','rdl','curl'],B:['sp','rl','pu','bor','lat'],
 const av=i=>E[i].q=='bw'||S.eq[E[i].q];
 const est=ids=>Math.round(ids.reduce((t,i)=>t+E[i].s*(30+E[i].r),0)/60);
 const alts=(id,cur)=>Object.keys(E).filter(i=>av(i)&&i!=id&&E[i].g==E[id].g&&!cur.includes(i)).sort((a,b)=>(E[b].p==E[id].p)-(E[a].p==E[id].p));
-const ensure=()=>{S.prog.X=S.prog.X||['tpu','bor','arn','sk','dead'];S.w=S.w||[];S.vids=S.vids||{}};
+const ensure=()=>{S.prog.X=S.prog.X||['tpu','bor','arn','sk','dead'];S.w=S.w||[];S.vids=S.vids||{};S.hdel=S.hdel||[]};
 const fix=()=>{for(const d of DAY)S.prog[d]=S.prog[d].map(i=>av(i)?i:(alts(i,S.prog[d])[0]||i))};
 ensure();fix();
 console.assert(Object.values(S.prog).flat().every(av)&&!Object.values(E).some(e=>/bulgarian|bench|step-up/i.test(e.n)),'program needs gear we do not own');
-let v='home',F='all',AD,W=null,SW=null,T;
+let v='home',F='all',AD,HM=0,HV=0,HE=0,W=null,SW=null,T;
 const $=s=>document.querySelector(s),app=$('#app'),w=$('#w'),dlg=$('#dlg');
 const fmtD=d=>new Intl.DateTimeFormat(undefined,{weekday:'short',day:'numeric',month:'short'}).format(d);
 const mon=()=>{const n=new Date();n.setHours(0,0,0,0);n.setDate(n.getDate()-((n.getDay()+6)%7));return +n};
@@ -304,7 +304,7 @@ return `<h1>Progress</h1><div class="grid"><div class="card"><p class="m">Workou
 ${wtCard()}
 <div class="card"><h3>Workouts per week</h3><div class="bars" role="img" aria-label="Workouts in the last 6 weeks: ${wks.join(', ')}">${wks.map(n=>`<i style="height:${n*30+4}px" title="${n}"></i>`).join('')}</div></div>
 <div class="card"><h3>Personal bests</h3>${Object.keys(S.pr).map(i=>`<div class="li"><span>${E[i].n}</span><b class="pr">${S.pr[i]} reps</b></div>`).join('')||'<p class="m">Your bests appear here after your first workout.</p>'}</div>
-<div class="card"><h3>Recent</h3>${[...h].reverse().slice(0,8).map(x=>`<div class="li"><span>${x.day?'Day '+x.day:'Custom'}, ${x.logs.length} sets</span><span class="m">${fmtD(x.d)}, ${x.dur} min</span></div>`).join('')||'<p class="m">Nothing logged yet.</p>'}</div>`};
+<div class="card"><h3>Recent</h3>${[...h].reverse().slice(0,HM?999:10).map(x=>`<div class="li"><button class="lnk" data-a="hv" data-v="${x.d}">${x.day?'Day '+x.day:'Custom'}, ${x.logs.length} sets<br><span class="m">${fmtD(x.d)}, ${x.dur} min</span></button><span class="m" aria-hidden="true">Edit &#8250;</span></div>`).join('')||'<p class="m">Nothing logged yet.</p>'}${!HM&&h.length>10?'<button class="ghost add" data-a="more">Show all '+h.length+'</button>':''}</div>`};
 
 const me=()=>{
   const u=auth()&&auth().currentUser;
@@ -322,6 +322,13 @@ const toast=m=>{const t=document.createElement('div');t.className='toast';t.setA
 const cnt=()=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;document.querySelectorAll('.n').forEach(el=>{const t=+el.textContent;if(!t)return;const s=performance.now();(function f(n){const p=Math.min(1,(n-s)/600);el.textContent=Math.round(t*(1-(1-p)**3));if(p<1)requestAnimationFrame(f)})(s)})};
 const show=h=>{dlg.innerHTML=h+'<form method="dialog"><button class="big">Close</button></form>';dlg.showModal()};
 const det=id=>{const e=E[id];return `<h2>${e.n}</h2><p class="m">${e.g}, ${['','beginner','intermediate'][e.d]}, ${EQ[e.q]}${av(id)?'':' (turn it on in Profile)'}</p><p><b>${e.s} sets × ${e.lo}–${e.hi} reps</b>, rest ${e.r}s</p><ol>${e.h.split('. ').map(x=>`<li>${x.replace(/\.$/,'')}.</li>`).join('')}</ol><p class="m">Progress: add a rep each session until ${e.hi} on every set, then slow the lowering to 3 seconds.</p><a class="big" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' form #shorts')}" target="_blank" rel="noopener">Find a Short on YouTube</a>`};
+const hx=()=>S.hist.find(x=>x.d==HV),rePR=()=>{S.pr={};for(const h of S.hist)for(const l of h.logs)S.pr[l.id]=Math.max(S.pr[l.id]||0,l.reps)};
+const hsav=()=>{HE=1;try{localStorage[K]=JSON.stringify(S)}catch{}hdlg()};
+const hdlg=()=>{const h=hx();if(!h)return;const y=dlg.scrollTop,n={},seen=[];
+dlg.innerHTML=`<h2>${h.day?'Day '+h.day:'Custom'}, ${fmtD(h.d)}</h2><p class="m">${h.dur} min. Change reps, add or remove sets.</p>${h.logs.map((l,k)=>{const first=!seen.includes(l.id);if(first)seen.push(l.id);n[l.id]=(n[l.id]||0)+1;const nm=E[l.id]?E[l.id].n:l.id;
+return (first?`<h3>${nm}</h3>`:'')+`<div class="hs"><span class="m">Set ${n[l.id]}</span><button data-a="hrep" data-v="${k}:-1" aria-label="Fewer reps, ${nm} set ${n[l.id]}">&minus;</button><b>${l.reps}</b><button data-a="hrep" data-v="${k}:1" aria-label="More reps, ${nm} set ${n[l.id]}">+</button><button data-a="hset" data-v="${k}" aria-label="Remove ${nm} set ${n[l.id]}">&#10005;</button></div>`+(h.logs.map(q=>q.id).lastIndexOf(l.id)==k?`<button class="ghost add" data-a="hadd" data-v="${l.id}">+ Add set</button>`:'')}).join('')}
+<button class="ghost add" data-a="hdel" style="margin-top:20px">Delete workout</button><form method="dialog"><button class="big">Done</button></form>`;if(!dlg.open)dlg.showModal();dlg.scrollTop=y};
+dlg.addEventListener('close',()=>{if(HE){HE=0;rePR();save();render()}});
 const swapUI=(id,cur)=>{const c=alts(id,cur);return `<h2>Swap ${E[id].n}</h2>${c.length?c.map(i=>{const same=E[i].p==E[id].p;return `<button class="opt" data-a="pick" data-v="${i}"><span><b>${E[i].n}</b><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></span><span class="tag${same?' same':''}">${same?'Same movement':'Same muscle'}</span></button>`}).join(''):'<p class="m">No other exercises for this muscle with your equipment.</p>'}`};
 
 const I={swap:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></svg>',
@@ -365,6 +372,12 @@ nav(x){v=x;render(1);scrollTo(0,0)},filt(x){F=x;render()},det:id=>show(det(id)),
 swap(x){const d=x[0],i=+x.slice(1);SW={day:d,i};show(swapUI(S.prog[d][i],S.prog[d]))},
 sww(){const id=W.ids[W.i];SW={w:1,day:W.day,i:W.i};show(swapUI(id,W.ids))},
 pick(n){toast('Swapped to '+E[n].n);if(SW.w){W.ids[W.i]=n;W.s=Math.min(W.s,E[n].s-1);W.reps=E[n].lo;recalc()}if(SW.day){S.prog[SW.day][SW.i]=n;save()}dlg.close();SW.w?wk():render()},
+more(){HM=1;render()},
+hv(d){HV=+d;hdlg()},
+hrep(x){const[k,n]=x.split(':'),l=hx().logs[k];l.reps=Math.max(1,Math.min(999,l.reps+ +n));hsav()},
+hset(x){const h=hx();if(h.logs.length<2){toast('Delete the whole workout instead');return}h.logs.splice(+x,1);hsav()},
+hadd(id){const h=hx(),k=h.logs.map(l=>l.id).lastIndexOf(id);h.logs.splice(k+1,0,{id,reps:h.logs[k].reps});hsav()},
+hdel(){ask('Delete this workout?','This removes it from your history and recalculates your records.','Delete','Cancel',()=>{S.hist=S.hist.filter(x=>x.d!=HV);S.hdel.push(HV);HE=0;rePR();save();render();toast('Workout deleted')})},
 add(d){AD=d;const cur=S.prog[d],gs={};Object.keys(E).filter(i=>av(i)&&!cur.includes(i)).forEach(i=>(gs[E[i].g]??=[]).push(i));show(`<h2>Add to Day ${d}</h2>${Object.keys(gs).map(g=>`<h3>${g}</h3>${gs[g].map(i=>`<button class="opt" data-a="addp" data-v="${i}"><span><b>${E[i].n}</b><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></span></button>`).join('')}`).join('')||'<p class="m">Every exercise you can do is already in this day.</p>'}`)},
 addp(i){S.prog[AD].push(i);save();dlg.close();render();toast('Added '+E[i].n)},
 del(x){const d=x[0],k=+x.slice(1);if(S.prog[d].length<2){toast('Keep at least one exercise');return}const n=E[S.prog[d][k]].n;S.prog[d].splice(k,1);save();render();toast('Removed '+n)},
@@ -396,6 +409,7 @@ signin(){signInWithGoogle().then(()=>{gate();toast('Signed in')}).catch(e=>{cons
 skip(){gate()},
 signout(){signOutGoogle().then(()=>{if(unsub){unsub();unsub=null}render(1);toast('Signed out')}).catch(e=>{console.warn('Sign out failed',e);toast('Sign out failed')})}};
 document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='wi')act.logw()});
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});document.addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault()},{passive:false});
 document.onclick=e=>{const b=e.target.closest('[data-a]');if(b)act[b.dataset.a](b.dataset.v)};
 document.onchange=e=>{const t=e.target,k=t.dataset.k;if(k=='eq'){S.eq[t.value]=t.checked?1:0;fix();save();render();toast('Program updated')}};
 // Login page shows once: until the user signs in or skips, then never again on this device.

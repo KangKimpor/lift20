@@ -22,8 +22,8 @@ Always read the current `index.html` before editing. If the repo is not on disk,
 - `L`: pipe-delimited exercise table `id|name|group|pattern|equip|difficulty|sets|repLo|repHi|rest|how-to`, parsed once into `E`. About 58 exercises. `equip` is one of `bw db dip bar`. `group` is one of `chest back shoulders biceps triceps legs core`. `pattern` is `push pull squat hinge lunge iso core`. Difficulty `1` beginner, `2` intermediate. `how-to` is sentences separated by `. ` and each ends with a period. Adding an exercise = add one line with a unique `id`; never reuse or rename an existing id (ids are stored in history, PRs and saved video links).
 - `S`: persisted state in `localStorage['lift20']`: `{prog:{A,B,C,X}, hist:[{d,dur,day,logs:[{id,reps}]}], eq, pr, w:[{d,kg}], vids:{exerciseId:youtubeId}}`. `eq` is `{dip,db,bar}` as 1/0, `pr` maps exercise id to best reps, `w` is body-weight entries, `vids` is saved Shorts links. Keep the shape backward compatible: real data lives in the owner's browser and in Firestore. Add new fields with a default in `ensure()` (runs at load and after every cloud merge, and gives old saves `prog.X`, `w` and `vids`) instead of breaking old saves.
 - `DAY=['A','B','C','X']`, `WHEN={A:'Mon',B:'Wed',C:'Fri',X:'Weekend'}`. Day X default: Tempo Push-ups, DB Row (two arms), Arnold Press, DB Floor Skull Crusher, Dead Bug.
-- `av(id)`: equipment gate. Every picker goes through `alts()` or `build()`, which call `av()`. Never bypass it. `fix()` replaces unavailable program exercises (all four days) with a same-group alternative after an equipment toggle.
-- `FM` / `P`: builder focus map and presets. `FM` is also the Exercises-tab filter: chip `upper` shows chest, back, shoulders, biceps and triceps; `chest` includes triceps; `back` includes biceps; chips are `all upper chest back shoulders arms legs core`. `build(focus, minutes)` picks compounds first, avoids repeating group+pattern, sorts isolation/core last, trims to fit time. `est(ids)` estimates minutes from sets x (30s + rest).
+- `av(id)`: equipment gate. Every picker goes through `alts()` or the add-exercise list, which call `av()`. Never bypass it. `fix()` replaces unavailable program exercises (all four days) with a same-group alternative after an equipment toggle.
+- `FM`: focus map, used only as the Exercises-tab filter: chip `upper` shows chest, back, shoulders, biceps and triceps; `chest` includes triceps; `back` includes biceps; chips are `all upper chest back shoulders arms legs core`. `est(ids)` estimates minutes from sets x (30s + rest). The workout builder (presets, Generate, `build()`, `P`, `G`) was removed on request; old history entries with `day:0` still show as `Custom`.
 - Views `home plan ex stats me` return HTML strings (`V` maps `prog` to `plan`); `render()` swaps them into `#app`. Workout mode is the `#w` overlay, driven by the in-memory `W` and `wk()`. Details, swaps, confirms and the paste-link form all use the `#dlg` dialog.
 - `act`: all click handlers, dispatched by `data-a` (handler) and `data-v` (argument). `document.onchange` handles selects and checkboxes via `data-k`. One `keydown` listener submits the weight field on Enter. New button = add an `act` method and a `data-a` attribute; do not add inline `onclick` or `onkeydown` (module scope: `act` is not global).
 - Rest timer: `W.rest`, `tick()`, `ring()`. It uses end timestamps so it survives background tab throttling.
@@ -33,6 +33,7 @@ Always read the current `index.html` before editing. If the repo is not on disk,
 - `week()` outlines Mon, Wed and Fri; there is no legend sentence under it (it was removed on purpose).
 - The three stat cards on Home wrap their content in an inner `<div>`; the desktop block makes those cards and the "This week" card flex columns with `justify-content:center`. Keep the inner `<div>`: flex on bare text nodes splits "3 workouts" onto two lines.
 - The Workouts tab has no divider lines between exercise rows (`.v-prog .li{border:0}`); other tabs keep them.
+- Workouts tab: each exercise row has Swap plus a round remove button (`act.del`, refuses to go below one exercise); each day card has `+ Add exercise` (`act.add` opens `#dlg` with available exercises grouped by muscle, `act.addp` appends to `S.prog[AD]`). Both save immediately.
 - Workouts tab titles read `Day A (Mon), about 25 min`. On desktop the grid has 3 columns, so Day X wraps to a second row.
 
 ## Workout overlay structure (`#w`)
@@ -64,7 +65,7 @@ Always read the current `index.html` before editing. If the repo is not on disk,
 
 ## Feedback motion
 All motion is CSS keyframes plus a few tiny JS hooks; the `prefers-reduced-motion` rule disables every animation and transition (the `cnt()` count-up also checks it). Add new motion next to the `/* feedback motion */` block.
-- View enter: `render(1)` adds `.enter` to `<main>` (children fade up, staggered). Pass `1` only on navigation, builder generate/clear and first load.
+- View enter: `render(1)` adds `.enter` to `<main>` (children fade up, staggered). Pass `1` only on navigation and first load.
 - Press feedback: `:active` scale on buttons; hover effects only under `@media(hover:hover)`.
 - Reps stepper: `act.rep` restarts `.bump` on `#rv` and calls `hap(8)`. Complete set: `#cs` gets `.ok`; a personal best also gets `.pr` (gold, glow) and a longer vibration.
 - Progress bar animates from the previous width via `--f:${W.pw}%`. Rest end: `ring()` toggles `.dn` on `.ring` and `.pulse` on `#nx`.
@@ -72,7 +73,7 @@ All motion is CSS keyframes plus a few tiny JS hooks; the `prefers-reduced-motio
 - Toasts: `toast(msg)` adds a `role=status` pill that removes itself after 2s (z-index 20). Use for confirmations only. `hap(ms|pattern)` wraps `navigator.vibrate`.
 
 ## Behaviours that are easy to break
-- `hist[].day` is `'A'|'B'|'C'|'X'` for program workouts and `0` for builder-generated ones. Keep `day: 0` for generated workouts. Home no longer uses history to pick the day.
+- `hist[].day` is `'A'|'B'|'C'|'X'` for program workouts and `0` for old builder-generated ones (no longer created). Home no longer uses history to pick the day.
 - A "new personal best" only fires when a prior PR already exists for that exercise; the first ever log just sets the baseline.
 - Streak = trailing run of workouts with gaps of 4 days or less.
 - `pick()` writes to the program only when `SW.day` is set (program swap) and to the live workout when `SW.w` is set (in-workout swap). Both can be true. After a swap `wk()` runs, and `vid()` rebuilds for the new exercise.
@@ -93,13 +94,13 @@ Firebase Auth (Google provider) + Firestore doc `users/{uid}` holding `S`. local
 - No preloaded Shorts (see Tutorial videos). Upgrade path: fill the `YT` map once the owner supplies links.
 - In-progress workout is memory-only: persist `W` to localStorage if mid-session refresh loss annoys the owner.
 - Weight deletions can resurrect across devices (union merge). Upgrade: store deletions or a per-entry `updated` stamp.
-- Not built: RPE and set notes, unbalanced-workout warnings, builder difficulty/exercise-count filters, plank/side plank.
+- Not built: RPE and set notes, unbalanced-workout warnings, plank/side plank.
 
 ## Checks before shipping any change
 1. Open `index.html` in a browser, console clean (the load-time `console.assert` guards equipment and banned exercises).
 2. Run a full Day A: complete sets, rest timer (+15/-15/pause/skip), finish, summary, refresh, data persists. Open the Video button mid-workout: the player survives set completion and rest, and disappears when closed.
 3. Swap an exercise in program and in workout mode; toggle each equipment item in Profile. End workout and Erase everything open the in-app dialog, not a browser popup.
-4. Builder: every preset yields exercises only from owned equipment and fits the time. Exercises tab: every chip (including `upper`, `shoulders`, `arms`) lists exercises.
+4. Add/remove: the add list only shows owned-equipment exercises not already in that day; remove stops at one exercise. Exercises tab: every chip (including `upper`, `shoulders`, `arms`) lists exercises.
 5. Home on each weekday (Mon A, Tue B next up, Wed B, Thu C next up, Fri C, Sat/Sun X). Progress tab: log, replace and delete a weight.
 6. First visit shows the login page; sign in or skip, reload, and it stays hidden. Profile opens signed in and signed out.
 7. Viewports: 390 wide (iPhone), 820 (iPad), 1280 (desktop), landscape; no horizontal scroll; the portrait video fits (height `min(56vh,440px)`).

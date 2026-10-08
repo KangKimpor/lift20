@@ -28,7 +28,7 @@ ul.list{list-style:none;padding:0;margin:8px 0}ul.list li{display:flex;justify-c
 label{display:block;color:var(--m)}select{display:block;width:100%;min-height:48px;margin-top:4px;background:var(--s);border:1px solid var(--s2);border-radius:12px;padding:0 10px}
 .dots{display:flex;gap:8px}.dots span{flex:1;text-align:center;font-size:.8rem;color:var(--m)}.dots i{display:block;width:100%;aspect-ratio:1;border-radius:50%;border:2px solid var(--s2);margin-bottom:4px}.dots .p i{border-color:var(--a)}.dots .d i{background:var(--ok);border-color:var(--ok)}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--s);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--s2);z-index:5}
-nav button{flex:1;min-height:52px;background:none;border:0;border-radius:14px;color:var(--m);font-weight:700}nav button[aria-current=true]{color:var(--t);background:var(--s2)}
+nav button{flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;background:none;border:0;border-radius:14px;color:var(--m);font-weight:700}nav button[aria-current=true]{color:var(--t);background:var(--s2)}nav button span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 #w{position:fixed;inset:0;z-index:10;background:var(--bg);overflow:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px))}
 #w>div{max-width:520px;margin:0 auto}#w[hidden]{display:none}
 #lg{position:fixed;inset:0;z-index:15;background:var(--bg);display:grid;place-items:center;text-align:center;padding:24px}#lg[hidden]{display:none}#lg>div{width:min(380px,100%)}
@@ -87,7 +87,7 @@ dialog[open]{animation:up .22s}dialog[open]::backdrop{animation:fade .2s}
 body{padding-left:230px}
 nav{top:0;right:auto;width:230px;flex-direction:column;gap:6px;padding:calc(28px + env(safe-area-inset-top,0px)) 14px 20px;border:0;border-right:1px solid var(--s2)}
 nav::before{content:"Lift20";font:italic 400 2.4rem/1 "Instrument Serif",Georgia,serif;color:var(--t);padding:0 14px 22px}
-nav button{flex:none;text-align:left;padding:0 14px;min-height:48px;font-size:1rem}nav button:hover{background:var(--s2);color:var(--t)}
+nav button{flex:none;justify-content:flex-start;gap:14px;text-align:left;padding:0 14px;min-height:48px;font-size:1rem}nav button span{position:static;width:auto;height:auto;overflow:visible;clip:auto}nav button:hover{background:var(--s2);color:var(--t)}
 main{max-width:1120px;padding:44px 48px 56px;margin:0 auto}
 h1,.n{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
 h1{font-size:3.6rem;letter-spacing:-.01em;margin:0 0 .3em}.n{font-size:3.2rem;line-height:1}
@@ -135,7 +135,7 @@ dialog{width:min(560px,92vw)}
 <div id="w" hidden></div>
 <div id="lg" hidden><div><h1>Lift20</h1><p class="m">Sign in to save your workouts and keep them on every device.</p><button class="big" data-a="signin">Continue with Google</button><button class="ghost" data-a="skip" style="margin-top:12px">Skip for now</button></div></div>
 <dialog id="dlg"></dialog>
-<nav aria-label="Main"><button data-a="nav" data-v="home">Home</button><button data-a="nav" data-v="prog">Workouts</button><button data-a="nav" data-v="ex">Exercises</button><button data-a="nav" data-v="stats">Progress</button><button data-a="nav" data-v="me">Profile</button></nav>
+<nav aria-label="Main"><button data-a="nav" data-v="home" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 9.5V20h5v-6h4v6h5V9.5"/></svg><span>Home</span></button><button data-a="nav" data-v="prog" aria-label="Workouts" title="Workouts"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg><span>Workouts</span></button><button data-a="nav" data-v="ex" aria-label="Exercises" title="Exercises"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><span>Exercises</span></button><button data-a="nav" data-v="stats" aria-label="Progress" title="Progress"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M6 20v-7M12 20V5M18 20v-10"/></svg><span>Progress</span></button><button data-a="nav" data-v="me" aria-label="Profile" title="Profile"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg><span>Profile</span></button></nav>
 <script type="module">
 // ponytail: one file, no framework/build; string templates + one render(). Upgrade to a framework if screens outgrow this.
 // ponytail: exercise data is one pipe-delimited block parsed once; move to JSON if it needs per-exercise video IDs.

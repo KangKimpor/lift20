@@ -6,6 +6,8 @@ Workouts auto-save on this device and reopen after a refresh or browser restart,
 
 Skip exercise moves to the next exercise and keeps sets already logged. Skipping the last exercise finishes with those sets; skipping everything creates no empty workout record.
 
+Skip set skips just the current set without logging reps or starting another rest. The last set advances to the next exercise or finishes the session, and skipped sets survive refresh.
+
 Dark glass dashboard, floating navigation, exercise search and responsive phone/tablet/desktop layouts. All 58 exercises have click-to-play YouTube Shorts tutorials in their details and workout view; saved video links override the built-ins. Tutorial source and metadata checks are recorded in [checks/tutorials.json](checks/tutorials.json). YouTube playback depends on its service and your network.
 
 Run locally: open `index.html`, or `npx serve .`

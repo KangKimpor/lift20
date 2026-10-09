@@ -67,6 +67,32 @@ async page => {
   await page.evaluate(()=>{check.act.close();check.S.hist=[];check.S.pr={};localStorage.lift20=JSON.stringify(check.S);check.act.start('A')});
   for(let i=0;i<5;i++)await page.locator('#w [data-a="skipex"]').click();
   assert(await page.evaluate(key=>!check.W&&check.S.hist.length===0&&!localStorage.getItem(key),key),'Skipping every exercise creates no empty history');
+  // Skip individual sets without logging reps, restarting rest or replacing video.
+  await page.evaluate(()=>{check.act.start('A');check.act.vp()});
+  await page.locator('#wv [data-a="play"]').click();
+  await page.evaluate(()=>window.skipFrame=document.querySelector('#wv iframe'));
+  await page.locator('#w [data-a="skipset"]').click();
+  assert(await page.evaluate(()=>check.W.i===0&&check.W.s===1&&check.W.total===14&&check.W.logs.length===0&&!check.W.rest&&skipFrame===document.querySelector('#wv iframe')),'Skip set advances once with video intact and no logged reps');
+  await reload();
+  assert(await page.evaluate(()=>check.W.i===0&&check.W.s===1&&check.W.skipped===1&&check.W.total===14),'Skipped set survives refresh within same exercise');
+  await page.evaluate(()=>{check.act.done();check.act.skipset()});
+  assert(await page.evaluate(()=>check.W.s===1&&check.W.skipped===1&&check.W.logs.length===1),'Skip ignored during set feedback');
+  await page.waitForFunction(()=>check.W.rest);
+  await page.locator('#w [data-a="skipset"]').click();
+  await reload();
+  assert(await page.evaluate(()=>check.W.i===1&&check.W.s===0&&check.W.skipped===2&&check.W.logs.length===1&&!check.W.rest),'Skipping last set during rest advances exercise and saves');
+  for(let i=0;i<4;i++)await page.locator('#w [data-a="skipex"]').click();
+  assert(await page.evaluate(()=>check.S.hist.length===1&&check.S.hist[0].logs.length===1),'Mixed skipped/completed sets save only completed sets');
+  await page.evaluate(()=>{check.act.close();check.S.hist=[];check.S.pr={};localStorage.lift20=JSON.stringify(check.S);check.S.prog.X=['pu'];check.act.start('X')});
+  for(let i=0;i<3;i++)await page.locator('#w [data-a="skipset"]').click();
+  await reload();
+  assert(await page.evaluate(key=>!check.W&&check.S.hist.length===0&&!localStorage.getItem(key),key),'Skipping all sets ends without an empty history record');
+  await page.evaluate(()=>{check.S.prog.X=['pu'];check.act.start('X');check.act.done()});
+  await page.waitForFunction(()=>check.W.rest);
+  await page.locator('#w [data-a="skipset"]').click();
+  await page.locator('#w [data-a="skipset"]').click();
+  assert(await page.evaluate(key=>check.W.fin&&check.S.hist.length===1&&check.S.hist[0].logs.length===1&&!localStorage.getItem(key),key),'Skipping final workout set saves only logged sets and clears draft');
+  await page.evaluate(()=>{check.act.close();check.S.hist=[];check.S.pr={};localStorage.lift20=JSON.stringify(check.S)});
   // Finish a short workout, refreshing during final set feedback.
   await page.evaluate(()=>{check.S.prog.X=['pu'];check.act.start('X')});
   for(let i=0;i<2;i++){
@@ -92,5 +118,5 @@ async page => {
   await page.evaluate(()=>{Storage.prototype.setItem=function(){throw Error('QuotaExceededError')};check.S.prog.A[0]='dip';check.act.start('A');check.act.rep('1');check.saveWorkout();check.saveWorkout()});
   assert(await page.locator('.toast').count()===1&&await page.locator('#rv').textContent()==='7','Blocked storage warns once without breaking workout');
   assert(errors.length===0,'No runtime errors: '+errors.join('; '));
-  return 'PASS: immediate refresh; pending/final sets; running/paused/adjusted/expired rest; rep batching; zero timer writes; swaps; skip exercise; discard; completion deduplication; corrupt drafts; storage failure.';
+  return 'PASS: immediate refresh; pending/final sets; running/paused/adjusted/expired rest; rep batching; zero timer writes; swaps; skip exercise/set; discard; completion deduplication; corrupt drafts; storage failure.';
 }

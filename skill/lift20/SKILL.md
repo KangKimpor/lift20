@@ -14,7 +14,7 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 - Day A Monday, B Wednesday, C Friday; optional weekend Day X. Progress through reps, tempo, pauses, range and harder variations, never heavier weights.
 - Tutorials are real YouTube Shorts, loaded only on a button press. Floor and standing exercises must not use bench or seated substitutes. Never invent IDs.
 - The October 2026 redesign supersedes the old blue/cream palette and unchanged-mobile rules. Default near-black glass cards, white text/actions, translucent borders, one sans-serif and floating capsule navigation. Color tokens live in `:root`; explicit `data-theme=light` provides a light variant.
-- Phone first, safe-area padding, 44px targets, visible focus, reduced motion and browser zoom enabled. Do not add gesture blockers or zoom-disabling viewport settings.
+- Primary devices: iPhone 15 and iPad A16, mainly Safari Home Screen web apps. The owner's October 2026 request disables page zoom: viewport scale is fixed, root touch-action allows panning without pinch, and Safari native pinch gestures are canceled. Preserve normal touch scrolling, text/input usability, 44px targets, visible focus and reduced motion.
 
 ## Data and rendering
 
@@ -30,7 +30,8 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 
 - Home starts with a local-time greeting to Por. No brand row or shared header breadcrumb. Clickable tiles show this week's completed workouts/training minutes and decimal body weight, both opening Progress. The session card keeps exercise-detail buttons, three calendar months of real activity dots (`week()`), and totals. Activity dates/counts are accessible.
 - Workouts has four equal A/B/C/X cards, each with details/tutorial, Swap, Remove, Add exercise and Start. Remove refuses the last exercise. Day cards form two columns from 600px; exercise controls occupy their own line below 1000px.
-- Layout classes (`dashboard`, `summary-pair`, `day-grid`, `library`, `section-grid`, `profile-grid`) define explicit responsive grids, centered at max 1160px. No sidebar or `nth-of-type` placement. Floating navigation stays at the bottom on every viewport.
+- Layout classes (`dashboard`, `summary-pair`, `day-grid`, `library`, `section-grid`, `profile-grid`) define explicit responsive grids, centered at max 1160px. Dashboard/Progress use tablet columns from 768px. No sidebar or `nth-of-type` placement. Safe-area variables protect all four edges across breakpoints, including workouts/dialogs. Floating navigation hides while a text/number input is focused on touch devices.
+- `manifest.webmanifest` and Apple metadata/icons provide standalone Home Screen launch. Do not add an offline service worker without handling app updates and in-progress workout loss.
 - Progress has totals, fractional body-weight history/chart, normalized weekly bars, personal bests and editable recent sessions. `.n` is for integer count-up only; weight uses `.wn`/plain text.
 - `wtCard()` uses `#wi` for kg, never `#wt` (workout header). All weight entries appear newest first inside collapsed native History details with a bounded scroll area. `logw` validates 20–400, rounds to 0.1 and replaces today's entry; `delw` deletes by timestamp and keeps History open with focus restored. Weight merge unions timestamps, so deletions can return from another device; add tombstones if that becomes a problem.
 - Profile preserves equipment, progression guidance and signed-out/Google account behavior.
@@ -67,5 +68,6 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 - Use an isolated browser: `python -m http.server 4173 --bind 127.0.0.1`, then `npx --yes --package @playwright/cli playwright-cli open http://127.0.0.1:4173` and `npx --yes --package @playwright/cli playwright-cli run-code --filename checks/smoke.js`.
 - The runnable check resets only that browser's local Lift20 state. It checks all tutorials/views/days; a full 15-set Day A; iframe continuity and close; timer controls; routine/equipment/history/PR paths; 62.5 kg; refresh persistence; 320/390/820/1280 and landscape; light tokens, reduced motion and keyboard controls. Screenshots go to `output/playwright/`.
 - Real Google sign-in/cloud sync needs a real authenticated account; do not claim it tested from a mock. Public YouTube metadata is not proof that every browser/network will play a clip.
+- `checks/mobile.js` runs in an isolated touch-enabled Playwright context and verifies zoom/manifest/icons, iPhone 15 (393×852), iPad A16 (820×1180), both orientations, split view, injected safe areas, touch keyboard behavior and workout/dialog geometry. WebKit emulation is not physical iOS testing.
 - Deploy is static Vercel (Framework Other, no build/output setting). Push to main redeploys; never push/deploy without user authorization.
 - Releases use semantic tags. Create/push tags and publish GitHub releases only when requested; never request tokens in chat.

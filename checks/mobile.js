@@ -47,7 +47,7 @@ async page => {
       });
       assert(!bounds.overflow,'No horizontal overflow: '+name+' '+view);
       assert(bounds.top>=top+24&&bounds.left>=left&&bounds.right>=right,'Main safe areas: '+name+' '+view);
-      assert(bounds.nav.x>=left+16&&bounds.nav.right<=width-right-16&&bounds.nav.bottom<=height-bottom-16,'Navigation safe areas: '+name);
+      assert(bounds.nav.x>=left+16&&bounds.nav.right<=width-right-16&&Math.abs(bounds.nav.bottom-(height-bottom-6))<1,'Navigation safe areas and 6px bottom gap: '+name);
       await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));
       assert(await page.evaluate(()=>document.querySelector('#app').lastElementChild.getBoundingClientRect().bottom<=document.querySelector('nav').getBoundingClientRect().top),'Last content clears navigation: '+name+' '+view);
     }

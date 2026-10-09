@@ -15,7 +15,7 @@ async page => {
       `window.check={E,YT,DAY,parseVideo,act,save,render,rePR,home,fix,ensure,me,get S(){return S},get W(){return W},set FB(value){FB=value}};</script></body>`)});
   });
   await page.goto(base);
-  await page.evaluate(() => {localStorage.removeItem('lift20');localStorage.removeItem('lift20_seen');});
+  await page.evaluate(() => {if(check.W)check.act.close();localStorage.removeItem('lift20_workout');localStorage.removeItem('lift20');localStorage.removeItem('lift20_seen');});
   await page.reload();
   await page.waitForFunction(() => window.check);
   assert(await page.locator('#lg').isVisible(), 'First visit gate');

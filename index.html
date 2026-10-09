@@ -136,6 +136,7 @@ const save=()=>{
   try{localStorage[K]=JSON.stringify(S)}catch{alert('Storage is full or blocked. Progress will not survive a refresh.');return}
   if(FB&&FB.auth.currentUser)
     FB.setDoc(FB.doc(FB.db,'users/'+FB.auth.currentUser.uid),S,{merge:true}).catch(e=>console.warn('Cloud save failed',e));
+  return true;
 };
 
 const L=`dip|Dips|chest|push|dip|2|3|6|12|90|Support yourself on straight arms and lean forward slightly. Lower until shoulders pass just below elbows. Press back up. Keep elbows from flaring wide.
@@ -310,7 +311,7 @@ const tutorial=id=>{const y=yid(id),n=E[id].n;return y?`<div class="vp" data-exe
 const vid=id=>{const el=$('#wv');if(el.dataset.id==id)return;el.dataset.id=id;el.innerHTML=tutorial(id)};
 const parseVideo=t=>{try{const u=new URL(t);if(!['https:','http:'].includes(u.protocol))return null;let id;if(['youtu.be','www.youtu.be'].includes(u.hostname))id=u.pathname.slice(1);else if(['youtube.com','www.youtube.com','m.youtube.com','www.youtube-nocookie.com'].includes(u.hostname)){const p=u.pathname.split('/');id=p[1]=='watch'?u.searchParams.get('v'):['shorts','embed'].includes(p[1])&&p.length==3?p[2]:null}return /^[\w-]{11}$/.test(id||'')?id:null}catch{return null}};
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
-const recalc=()=>{W.total=W.ids.reduce((t,i)=>t+E[i].s,0)};
+const recalc=()=>{W.total=W.ids.reduce((t,i)=>t+E[i].s,0)-(W.skipped||0)};
 const wk=()=>{guide(false);app.inert=!!W;$('nav').inert=!!W;document.body.style.overflow=W?'hidden':'';if(!W){w.hidden=true;w.innerHTML='';requestAnimationFrame(()=>{(WF&&WF.isConnected?WF:$('nav [aria-current=true]'))?.focus();WF=null});return}w.hidden=false;
 if(W.fin){const by={};W.logs.forEach(l=>(by[l.id]=by[l.id]||[]).push(l.reps));
 w.innerHTML=`<div><h1>Workout complete</h1><div class="grid"><div class="card"><span class="n">${W.fin}</span> min</div><div class="card"><span class="n">${W.logs.length}</span> sets</div><div class="card"><span class="n">${W.logs.reduce((t,l)=>t+l.reps,0)}</span> reps</div></div>
@@ -326,20 +327,40 @@ $('#wt').innerHTML=`<div class="wh"><button class="ghost" data-a="quit" aria-lab
 <div class="row"><button class="ghost" data-a="rt" data-v="-15">−15s</button><button class="ghost" data-a="rp" id="rpb">${r.pause?'Resume':'Pause'}</button><button class="ghost" data-a="rt" data-v="15">+15s</button></div><button class="big" id="nx" data-a="next">${r.over?'Next set':'Skip rest'}</button>`
 :`<div class="step"><button data-a="rep" data-v="-1" aria-label="One fewer rep">−</button><output id="rv" aria-live="polite">${W.reps}</output><button data-a="rep" data-v="1" aria-label="One more rep">+</button></div><p class="m" style="text-align:center">reps this set</p><button class="big" id="cs" data-a="done">Complete set</button>`);
 if(VP)vid(id);
-$('#wb').innerHTML=`<div class="acts"><button class="act" data-a="howw">${I.how} How to</button><button class="act" data-a="vp" aria-pressed="${!!VP}">${I.play} Video</button><button class="act" data-a="sww">${I.swap} Swap</button></div>`;
+$('#wb').innerHTML=`<div class="acts"><button class="act" data-a="howw">${I.how} How to</button><button class="act" data-a="vp" aria-pressed="${!!VP}">${I.play} Video</button><button class="act" data-a="sww">${I.swap} Swap</button></div><button class="ghost add" data-a="skipex">Skip exercise</button>`;
 [$('#wt'),$('#wb')].forEach(x=>feedback(x,'rise'));
 W.pw=W.logs.length/W.total*100;if(r)ring()};
 const ring=()=>{const r=W&&W.rest;if(!r||!$('#rg'))return;$('#rg').style.strokeDashoffset=339.3*(1-r.left/r.tot);$('#rt').textContent=fmt(r.left);$('#nx').textContent=r.over?'Next set':'Skip rest';$('.ring').classList.toggle('dn',!!r.over);$('.ring').classList.toggle('paused',!!r.pause);$('#nx').classList.toggle('pulse',!!r.over)};
 const beep=()=>{try{navigator.vibrate&&navigator.vibrate(200);const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.value=.05;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.25)}catch{}};
 const tick=()=>{clearInterval(T);T=setInterval(()=>{const r=W&&W.rest;if(!r||r.pause||r.over)return;r.left=Math.max(0,Math.ceil((r.end-Date.now())/1e3));if(!r.left){r.over=1;beep()}ring()},250)};
-const fin=()=>{clearInterval(T);for(const k in W.best)S.pr[k]=Math.max(S.pr[k]||0,W.best[k]);const dur=Math.max(1,Math.round((Date.now()-W.start)/6e4));S.hist.push({d:Date.now(),dur,day:W.day,logs:W.logs});save();W.fin=dur;W.rest=null;wk()};
-// ponytail: an in-progress workout lives in memory only; a refresh mid-session loses it (finished sessions are saved).
+const fin=()=>{clearInterval(T);if(!W.logs.length){clearWorkout();W=null;wk();render();toast('Workout ended. No sets logged.');return}for(const k in W.best)S.pr[k]=Math.max(S.pr[k]||0,W.best[k]);const d=W.setAt,dur=Math.max(1,Math.round((d-W.start)/6e4));if(!S.hist.some(h=>h.d===d)&&!S.hdel.includes(d))S.hist.push({d,dur,day:W.day,logs:W.logs});if(save())clearWorkout();W.fin=dur;W.rest=null;wk()};
+const WK=K+'_workout';let workoutSave,workoutWarning=false;
+const workoutError=()=>{if(!workoutWarning){workoutWarning=true;toast('Workout recovery unavailable: device storage is full or blocked.')}};
+const clearWorkout=()=>{clearTimeout(workoutSave);try{localStorage.removeItem(WK)}catch{workoutError()}};
+// Save only this small local draft, never history/cloud data or timer ticks.
+const saveWorkout=()=>{clearTimeout(workoutSave);if(!W||W.fin)return;try{localStorage.setItem(WK,JSON.stringify({version:1,day:W.day,ids:W.ids,i:W.i,s:W.s,reps:W.reps,logs:W.logs,prs:[...W.prs],start:W.start,rest:W.rest||null,busy:!!W.busy,setAt:W.setAt||null,skipped:W.skipped||0}))}catch{workoutError()}};
+const queueWorkout=()=>{clearTimeout(workoutSave);workoutSave=setTimeout(saveWorkout,150)};
+const advanceSet=()=>{const e=E[W.ids[W.i]];W.busy=0;const last=W.s+1>=e.s;if(last&&W.i+1>=W.ids.length)return fin();
+if(last){W.s=0;W.i++;W.reps=E[W.ids[W.i]].lo}else W.s++;
+const end=W.setAt+550+e.r*1e3,left=Math.max(0,Math.ceil((end-Date.now())/1e3));W.rest={left,tot:e.r,end,over:!left};saveWorkout();wk();tick()};
+const restoreWorkout=()=>{
+  let draft;try{draft=JSON.parse(localStorage.getItem(WK));if(!draft)return;
+    const integer=n=>Number.isSafeInteger(n)&&n>=0,r=draft.rest;
+    if(draft.version!==1||!DAY.includes(draft.day)||!Array.isArray(draft.ids)||!draft.ids.length||!draft.ids.every(id=>Object.hasOwn(E,id))||!integer(draft.i)||draft.i>=draft.ids.length||!integer(draft.s)||draft.s>=E[draft.ids[draft.i]].s||!integer(draft.reps)||!Number.isFinite(draft.start)||draft.start<=0||!Array.isArray(draft.logs)||!draft.logs.every(l=>l&&Object.hasOwn(E,l.id)&&integer(l.reps))||!Array.isArray(draft.prs)||!draft.prs.every(id=>Object.hasOwn(E,id))||typeof draft.busy!=='boolean'||!integer(draft.skipped??0)||(draft.skipped||0)>draft.ids.slice(0,draft.i).reduce((n,id)=>n+E[id].s,0)||(draft.busy&&(!Number.isFinite(draft.setAt)||draft.setAt<draft.start||!draft.logs.length))||(r&&(!Number.isFinite(r.end)||!Number.isFinite(r.tot)||r.tot<1||!integer(r.left)||![undefined,false,true,0,1].includes(r.pause))))throw Error('Invalid workout draft');
+  }catch{clearWorkout();return}
+  W={day:draft.day,ids:draft.ids,i:draft.i,s:draft.s,reps:draft.reps,logs:draft.logs,prs:new Set(draft.prs),start:draft.start,rest:draft.rest,busy:draft.busy,setAt:draft.setAt,skipped:draft.skipped||0,best:{}};
+  for(const l of W.logs)W.best[l.id]=Math.max(W.best[l.id]||0,l.reps);recalc();
+  if(W.busy)advanceSet();else{const r=W.rest;if(r&&!r.pause){r.left=Math.max(0,Math.ceil((r.end-Date.now())/1e3));r.over=!r.left}wk();if(r)tick()}
+  $('#w button')?.focus();if(!W.fin)toast('Workout restored. Continue where you left off.');
+};
+window.addEventListener('pagehide',saveWorkout);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveWorkout()});
 
 const act={
 nav(x){v=x;render(1);scrollTo(0,0)},filt(x){F=x;render();reveal($('.library'))},det:id=>show(det(id)),
 swap(x){const d=x[0],i=+x.slice(1);SW={day:d,i};show(swapUI(S.prog[d][i],S.prog[d]))},
 sww(){const id=W.ids[W.i];SW={w:1,day:W.day,i:W.i};show(swapUI(id,W.ids))},
-pick(n){toast('Swapped to '+E[n].n);if(SW.w){W.ids[W.i]=n;W.s=Math.min(W.s,E[n].s-1);W.reps=E[n].lo;recalc()}if(SW.day){S.prog[SW.day][SW.i]=n;save()}dlg.close();if(SW.w)wk();else{render();feedback($(`[data-a=start][data-v="${SW.day}"]`)?.closest('.day-card'),'success')}},
+pick(n){toast('Swapped to '+E[n].n);if(SW.w){W.ids[W.i]=n;W.s=Math.min(W.s,E[n].s-1);W.reps=E[n].lo;recalc();saveWorkout()}if(SW.day){S.prog[SW.day][SW.i]=n;save()}dlg.close();if(SW.w)wk();else{render();feedback($(`[data-a=start][data-v="${SW.day}"]`)?.closest('.day-card'),'success')}},
 more(){HM=1;render()},
 hv(d){HV=+d;hdlg()},
 hrep(x){const[k,n]=x.split(':'),l=hx().logs[k];l.reps=Math.max(1,Math.min(999,l.reps+ +n));hsav();feedback(dlg.querySelectorAll('.hs b')[+k])},
@@ -349,7 +370,7 @@ hdel(){ask('Delete this workout?','This removes it from your history and recalcu
 add(d){AD=d;const cur=S.prog[d],gs={};Object.keys(E).filter(i=>av(i)&&!cur.includes(i)).forEach(i=>(gs[E[i].g]??=[]).push(i));show(`<h2>Add to Day ${d}</h2>${Object.keys(gs).map(g=>`<h3>${g}</h3>${gs[g].map(i=>`<button class="opt" data-a="addp" data-v="${i}"><span><b>${E[i].n}</b><span class="m">${E[i].s}×${E[i].lo}–${E[i].hi}, ${EQ[E[i].q]}</span></span></button>`).join('')}`).join('')||'<p class="m">Every exercise you can do is already in this day.</p>'}`)},
 addp(i){S.prog[AD].push(i);save();dlg.close();render();feedback($(`[data-a=start][data-v="${AD}"]`)?.closest('.day-card'),'success');toast('Added '+E[i].n)},
 del(x){const d=x[0],k=+x.slice(1);if(S.prog[d].length<2){toast('Keep at least one exercise');return}const n=E[S.prog[d][k]].n;S.prog[d].splice(k,1);save();render();feedback($(`[data-a=start][data-v="${d}"]`)?.closest('.day-card'),'success');toast('Removed '+n)},
-start(x,b){const ids=[...S.prog[x]];WF=b||document.activeElement;VP=0;W={ids,day:x,i:0,s:0,reps:E[ids[0]].lo,logs:[],best:{},prs:new Set,start:Date.now()};recalc();wk();$('#w [data-a=quit]').focus()},
+start(x,b){const ids=[...S.prog[x]];WF=b||document.activeElement;VP=0;W={ids,day:x,i:0,s:0,reps:E[ids[0]].lo,logs:[],best:{},prs:new Set,start:Date.now()};recalc();wk();saveWorkout();$('#w [data-a=quit]').focus()},
 vp(){VP=!VP;const v=$('#wv');if(VP)vid(W.ids[W.i]);else{v.innerHTML='';delete v.dataset.id}$('[data-a=vp]').setAttribute('aria-pressed',!!VP);if(VP&&v.scrollIntoView)v.scrollIntoView({block:'nearest',behavior:'smooth'})},
 vset(id){VD=dlg.open&&dlg.querySelector('.vp')?id:null;dlg.innerHTML=`<h2>Video for ${E[id].n}</h2><p class="m">Paste a YouTube Shorts link. Leave it empty to restore the built-in tutorial.</p><label class="sr" for="vl">YouTube tutorial link</label><input class="fld" id="vl" type="url" inputmode="url" placeholder="https://youtube.com/shorts/..." value="${S.vids[id]?'https://youtube.com/shorts/'+S.vids[id]:''}"><div class="cfm"><button class="ghost" data-a="vcancel">Cancel</button><button class="big" data-a="vsave" data-v="${id}">Save</button></div>`;if(!dlg.open)dlg.showModal()},
 vcancel(){const id=VD;VD=null;if(id)show(det(id));else dlg.close()},
@@ -357,20 +378,20 @@ vsave(id){const t=$('#vl').value.trim(),y=parseVideo(t);if(t&&!y){$('#vl').setAt
 if(y)S.vids[id]=y;else delete S.vids[id];save();const back=VD;VD=null;if(back)show(det(back));else dlg.close();const el=$('#wv');if(el)delete el.dataset.id;if(W&&!W.fin&&VP)vid(W.ids[W.i]);toast('Tutorial updated')},
 play(y,b){if(!/^[\w-]{11}$/.test(y))return;const el=b.closest('.vp');el.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${y}?autoplay=1&rel=0&playsinline=1" title="Tutorial: ${E[el.dataset.exercise].n}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`},
 how:id=>show(det(id)),howw(){show(det(W.ids[W.i]))},
-rep(x){W.reps=Math.max(0,W.reps+ +x);const o=$('#rv');o.textContent=W.reps;feedback(o);hap(8)},
+rep(x){W.reps=Math.max(0,W.reps+ +x);const o=$('#rv');o.textContent=W.reps;feedback(o);hap(8);queueWorkout()},
 done(){if(W.busy)return;W.busy=1;const session=W,e=E[W.ids[W.i]],r=W.reps,b=Math.max(S.pr[e.id]||0,W.best[e.id]||0),pr=S.pr[e.id]&&r>b;
 W.best[e.id]=Math.max(b,r);W.logs.push({id:e.id,reps:r});if(pr)W.prs.add(e.id);
+W.setAt=Date.now();saveWorkout();
 const c=$('#cs');c.textContent=pr?'New personal best!':'✓ Set complete';c.classList.add('ok');if(pr)c.classList.add('pr');hap(pr?[30,60,30]:30);
-setTimeout(()=>{if(W!==session)return;W.busy=0;const last=W.s+1>=e.s;if(last&&W.i+1>=W.ids.length)return fin();
-if(last){W.s=0;W.i++;W.reps=E[W.ids[W.i]].lo}else W.s++;
-W.rest={left:e.r,tot:e.r,end:Date.now()+e.r*1e3};wk();tick()},550)},
-rt(x){const r=W.rest;x=+x;r.tot=Math.max(15,r.tot+x);if(r.pause)r.left=Math.max(1,r.left+x);else{r.end+=x*1e3;r.left=Math.max(1,Math.ceil((r.end-Date.now())/1e3))}r.over=0;ring();feedback($('#rt'))},
-rp(){const r=W.rest;if(r.pause){r.pause=0;r.end=Date.now()+r.left*1e3}else r.pause=1;$('#rpb').textContent=r.pause?'Resume':'Pause';ring();feedback($('#rt'))},
-next(){W.rest=null;wk()},
-quit(){ask('End this workout?','Sets so far will not be saved.','End workout','Keep going',()=>{clearInterval(T);W=null;wk()})},
+setTimeout(()=>{if(W!==session)return;advanceSet()},550)},
+rt(x){const r=W.rest;x=+x;r.tot=Math.max(15,r.tot+x);if(r.pause)r.left=Math.max(1,r.left+x);else{r.end+=x*1e3;r.left=Math.max(1,Math.ceil((r.end-Date.now())/1e3))}r.over=0;ring();feedback($('#rt'));saveWorkout()},
+rp(){const r=W.rest;if(r.pause){r.pause=0;r.end=Date.now()+r.left*1e3}else{r.left=Math.max(0,Math.ceil((r.end-Date.now())/1e3));r.pause=1}$('#rpb').textContent=r.pause?'Resume':'Pause';ring();feedback($('#rt'));saveWorkout()},
+next(){W.rest=null;wk();saveWorkout()},
+skipex(){if(W.busy)return;clearInterval(T);W.rest=null;if(W.i+1>=W.ids.length){W.setAt=Date.now();W.s=E[W.ids[W.i]].s-1;W.busy=1;if(W.logs.length)saveWorkout();return fin()}W.skipped=(W.skipped||0)+E[W.ids[W.i]].s-W.s;W.i++;W.s=0;W.reps=E[W.ids[W.i]].lo;recalc();wk();saveWorkout();$('#w [data-a=done]').focus()},
+quit(){ask('End this workout?','This discards your saved workout in progress and its sets.','End workout','Keep going',()=>{clearInterval(T);clearWorkout();W=null;wk()})},
 yes(){dlg.close();CF&&CF()},no(){dlg.close()},
 close(){W=null;wk();v='home';render(1)},
-reset(){ask('Erase everything?','All workouts, records and settings on this device will be deleted.','Erase','Cancel',()=>{try{localStorage.removeItem(K)}catch{}location.reload()})},
+reset(){ask('Erase everything?','All workouts, records and settings on this device will be deleted.','Erase','Cancel',()=>{clearWorkout();W=null;try{localStorage.removeItem(K)}catch{}location.reload()})},
 logw(){const kg=Math.round(parseFloat($('#wi').value)*10)/10;if(!(kg>=20&&kg<=400)){$('#wi').setAttribute('aria-invalid','true');feedback($('#wi'),'error');toast('Enter your weight in kg');return}const day=new Date().toDateString();S.w=S.w.filter(e=>new Date(e.d).toDateString()!=day);S.w.push({d:Date.now(),kg});save();render();feedback($('.weight-card'),'success');toast('Weight logged')},
 wstep(d){const f=$('#wi'),l=S.w.at(-1);let v=parseFloat(f.value);if(isNaN(v))v=l?l.kg:60;f.value=Math.min(400,Math.max(20,Math.round((v+ +d)*10)/10)).toFixed(1);f.removeAttribute('aria-invalid');feedback(f);hap(8)},
 delw(x){const open=$('.weight-history')?.open;S.w=S.w.filter(e=>e.d!=+x);save();render();const history=$('.weight-history');if(open&&history){history.open=true;history.querySelector('summary').focus();feedback($('.weight-entries'),'rise')}else $('#wi').focus()},
@@ -388,6 +409,7 @@ document.onchange=e=>{const t=e.target,k=t.dataset.k;if(k=='eq'){S.eq[t.value]=t
 const lg=$('#lg'),gate=()=>{lg.hidden=true;app.inert=!!W;$('nav').inert=!!W;if(!W)$('nav [aria-current=true]')?.focus();try{localStorage.lift20_seen=1}catch{}};
 try{lg.hidden=!!localStorage.lift20_seen}catch{lg.hidden=false}
 render(1);
+restoreWorkout();
 if(!lg.hidden){app.inert=true;$('nav').inert=true;$('#lg button').focus()}
 // Cloud: restore a previous Google session and stream changes (skipped until the owner pastes the config).
 if(FIREBASE_CONFIG.apiKey)initFirebase().then(f=>f.onAuthStateChanged(f.auth,u=>{if(u){gate();syncFromCloud().catch(e=>console.warn('Cloud restore failed',e))}render()})).catch(e=>console.warn('Cloud unavailable',e));

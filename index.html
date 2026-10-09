@@ -35,6 +35,9 @@ dialog{inset:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-lef
 :root{--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.2,.8,.2,1.2)}
 html,body,#w,dialog,.weight-entries{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--m) 45%,transparent) transparent}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--m) 45%,transparent);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:var(--m)}::-webkit-scrollbar-button{display:none}.chips::-webkit-scrollbar{display:none}
+.scroll-guide{display:none;position:fixed;top:calc(var(--safe-top) + 8px);bottom:calc(var(--safe-bottom) + 8px);right:max(6px,var(--safe-right));width:3px;z-index:11;pointer-events:none;opacity:0;transition:opacity .18s}.scroll-guide.visible{opacity:.6}.scroll-guide i{display:block;width:100%;border-radius:99px;background:var(--m)}
+@media(hover:none) and (pointer:coarse){html,body,#w{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar,#w::-webkit-scrollbar{display:none;width:0;height:0}.scroll-guide:not([hidden]){display:block}}
+@media(forced-colors:active){html,body,#w{scrollbar-width:auto}.scroll-guide{display:none!important}}
 button{position:relative;overflow:hidden;transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .24s var(--spring)}button:active{transform:scale(.95)}button:disabled:active{transform:none}
 button>.tap-wave{position:absolute;bottom:auto;border-radius:50%;background:currentColor;opacity:0;pointer-events:none;z-index:2;animation:tap-wave .5s ease-out forwards}
 button[aria-busy=true]::after{content:'';width:16px;height:16px;margin-left:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
@@ -72,6 +75,7 @@ nav button{z-index:1}nav button[aria-current=true]{background:transparent;box-sh
 <div id="lg" role="dialog" aria-modal="true" aria-labelledby="welcome-title" hidden><div><p class="eyebrow m">Welcome to</p><h1 id="welcome-title">Lift20</h1><p class="m">Your training, one session at a time. Sign in to keep your progress on every device.</p><button class="big" data-a="signin">Continue with Google</button><button class="ghost" data-a="skip">Skip for now</button></div></div>
 <dialog id="dlg" autofocus></dialog>
 <nav aria-label="Main"><button data-a="nav" data-v="home" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8M5 9.5V20h5v-6h4v6h5V9.5"/></svg><span>Home</span></button><button data-a="nav" data-v="prog" aria-label="Workouts" title="Workouts"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg><span>Workouts</span></button><button data-a="nav" data-v="ex" aria-label="Exercises" title="Exercises"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><span>Exercises</span></button><button data-a="nav" data-v="stats" aria-label="Progress" title="Progress"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M6 20v-7M12 20V5M18 20v-10"/></svg><span>Progress</span></button><button data-a="nav" data-v="me" aria-label="Profile" title="Profile"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg><span>Profile</span></button></nav>
+<div class="scroll-guide" aria-hidden="true" hidden><i></i></div>
 <script type="module">
 // ponytail: one file, no framework/build; string templates + one render(). Upgrade to a framework if screens outgrow this.
 // ponytail: exercise data is parsed once; keep tutorials in YT so saved exercise IDs stay stable.
@@ -208,6 +212,27 @@ let v='home',F='all',Q='',AD,HM=0,HV=0,HE=0,W=null,WF=null,SW=null,T;
 const $=s=>document.querySelector(s),app=$('#app'),w=$('#w'),dlg=$('#dlg');
 const reduced=matchMedia('(prefers-reduced-motion:reduce)'),frames={pop:[{scale:.94},{scale:1.04},{scale:1}],rise:[{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],success:[{boxShadow:'0 0 0 0 #d3e5dc70'},{boxShadow:'0 0 0 7px #d3e5dc00'}],error:[{translate:'-4px 0'},{translate:'4px 0'},{translate:'-3px 0'},{translate:'3px 0'},{translate:'0 0'}]};
 const feedback=(el,name='pop')=>{if(el&&!reduced.matches)return el.animate(frames[name],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'})};
+const touchScroll=matchMedia('(hover:none) and (pointer:coarse)'),scrollGuide=$('.scroll-guide');
+let scrollFrame,scrollFade;
+const guide=show=>{
+  if(show===false){clearTimeout(scrollFade);scrollGuide.classList.remove('visible')}
+  else if(show){scrollGuide.classList.add('visible');clearTimeout(scrollFade);scrollFade=setTimeout(()=>scrollGuide.classList.remove('visible'),700)}
+  if(scrollFrame)return;
+  scrollFrame=requestAnimationFrame(()=>{
+    scrollFrame=0;const scroller=w.hidden?document.scrollingElement:w,range=scroller.scrollHeight-scroller.clientHeight;
+    scrollGuide.hidden=!touchScroll.matches||range<=1||!$('#lg').hidden;
+    if(scrollGuide.hidden)return;
+    const vp=visualViewport;scrollGuide.style.top=`calc(${vp?.offsetTop||0}px + var(--safe-top) + 8px)`;
+    scrollGuide.style.bottom=`calc(${Math.max(0,innerHeight-(vp?.height||innerHeight)-(vp?.offsetTop||0))}px + var(--safe-bottom) + 8px)`;
+    const track=scrollGuide.clientHeight,size=Math.min(track,Math.max(24,track*Math.min(scroller.clientHeight,vp?.height||innerHeight)/scroller.scrollHeight));
+    scrollGuide.firstElementChild.style.cssText=`height:${size}px;transform:translateY(${Math.max(0,Math.min(1,scroller.scrollTop/range))*(track-size)}px)`;
+  });
+};
+document.addEventListener('scroll',e=>{if(e.target===document||e.target===w)guide(true)},{capture:true,passive:true});
+window.addEventListener('resize',()=>guide(false),{passive:true});
+visualViewport?.addEventListener('resize',()=>guide(false),{passive:true});
+visualViewport?.addEventListener('scroll',()=>guide(),{passive:true});
+touchScroll.addEventListener('change',()=>guide(false));
 let revealObserver;
 const reveal=root=>{if(!root||reduced.matches)return;revealObserver?.disconnect();revealObserver=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('revealed');revealObserver.unobserve(entry.target)}},{threshold:.06});root.querySelectorAll('.page-head,.card').forEach((el,i)=>{el.classList.add('reveal');el.style.setProperty('--delay',Math.min(i,6)*28+'ms');revealObserver.observe(el)})};
 reduced.addEventListener('change',()=>{if(!reduced.matches)return;revealObserver?.disconnect();document.querySelectorAll('.reveal').forEach(el=>el.classList.add('revealed'));document.getAnimations().forEach(a=>a.cancel())});
@@ -255,7 +280,7 @@ const me=()=>{
 <section class="card progression"><p class="eyebrow m">Keep growing</p><h3 style="margin-top:14px">Same weights.<br>Stronger you.</h3><p>Add a rep each session until you reach the top of the range on every set.</p><p class="m">Then lower for 3 seconds, pause for one, or try a harder variation. Shorten rest only on small accessory lifts.</p><div class="row pills"><span class="pill">Reps</span><span class="pill">Tempo</span><span class="pill">Control</span></div></section>
 <section class="card account"><h3>Your account</h3><p class="account-state">${u?'Your progress syncs across devices.':'Progress saves on this device. Sign in to keep it everywhere.'}</p>${acc}</section></div>`};
 const V={home,prog:plan,ex,stats,me};
-const render=e=>{revealObserver?.disconnect();app.className='v-'+v;app.innerHTML=V[v]();cnt();$('nav').style.setProperty('--nav-index',Object.keys(V).indexOf(v));document.querySelectorAll('nav button').forEach(b=>{const current=b.dataset.v==v;if(current&&b.getAttribute('aria-current')!=='true')feedback(b.querySelector('svg'));b.setAttribute('aria-current',current)});if(e)reveal(app)};
+const render=e=>{revealObserver?.disconnect();app.className='v-'+v;app.innerHTML=V[v]();cnt();$('nav').style.setProperty('--nav-index',Object.keys(V).indexOf(v));document.querySelectorAll('nav button').forEach(b=>{const current=b.dataset.v==v;if(current&&b.getAttribute('aria-current')!=='true')feedback(b.querySelector('svg'));b.setAttribute('aria-current',current)});if(e)reveal(app);guide(false)};
 
 const hap=n=>navigator.vibrate&&navigator.vibrate(n);
 let CF;const ask=(t,b,ok,no,fn)=>{CF=fn;dlg.innerHTML=`<h2>${t}</h2><p class="m">${b}</p><div class="cfm"><button class="ghost" data-a="no">${no}</button><button class="big" data-a="yes">${ok}</button></div>`;dlg.showModal()};
@@ -286,7 +311,7 @@ const vid=id=>{const el=$('#wv');if(el.dataset.id==id)return;el.dataset.id=id;el
 const parseVideo=t=>{try{const u=new URL(t);if(!['https:','http:'].includes(u.protocol))return null;let id;if(['youtu.be','www.youtu.be'].includes(u.hostname))id=u.pathname.slice(1);else if(['youtube.com','www.youtube.com','m.youtube.com','www.youtube-nocookie.com'].includes(u.hostname)){const p=u.pathname.split('/');id=p[1]=='watch'?u.searchParams.get('v'):['shorts','embed'].includes(p[1])&&p.length==3?p[2]:null}return /^[\w-]{11}$/.test(id||'')?id:null}catch{return null}};
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const recalc=()=>{W.total=W.ids.reduce((t,i)=>t+E[i].s,0)};
-const wk=()=>{app.inert=!!W;$('nav').inert=!!W;document.body.style.overflow=W?'hidden':'';if(!W){w.hidden=true;w.innerHTML='';requestAnimationFrame(()=>{(WF&&WF.isConnected?WF:$('nav [aria-current=true]'))?.focus();WF=null});return}w.hidden=false;
+const wk=()=>{guide(false);app.inert=!!W;$('nav').inert=!!W;document.body.style.overflow=W?'hidden':'';if(!W){w.hidden=true;w.innerHTML='';requestAnimationFrame(()=>{(WF&&WF.isConnected?WF:$('nav [aria-current=true]'))?.focus();WF=null});return}w.hidden=false;
 if(W.fin){const by={};W.logs.forEach(l=>(by[l.id]=by[l.id]||[]).push(l.reps));
 w.innerHTML=`<div><h1>Workout complete</h1><div class="grid"><div class="card"><span class="n">${W.fin}</span> min</div><div class="card"><span class="n">${W.logs.length}</span> sets</div><div class="card"><span class="n">${W.logs.reduce((t,l)=>t+l.reps,0)}</span> reps</div></div>
 <div class="card"><h3>Highlights</h3>${Object.keys(by).map(i=>`<div class="li"><span>${E[i].n}</span><b>${by[i].join(' / ')}</b></div>`).join('')}</div>

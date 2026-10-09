@@ -10,7 +10,7 @@ Deploy: import this repo in Vercel (Framework: Other, no build command).
 
 Optimized for Safari Home Screen use on iPhone 15 and iPad A16: fixed page zoom, standalone launch/icon, safe areas in both orientations, tablet columns, and navigation that hides while typing. In Safari, use Share → Add to Home Screen and keep Open as Web App enabled where offered. No offline page cache is installed; saved local progress remains on the device.
 
-Tap feedback, a sliding tab highlight, card reveals, dialog/history transitions, animated saves/validation and workout celebrations make interactions feel responsive. Reduce Motion disables these effects, including when changed during use. Scrollbars have a thin muted thumb and transparent track where the browser supports styling; iOS/iPadOS may retain their native indicators.
+Tap feedback, a sliding tab highlight, card reveals, dialog/history transitions, animated saves/validation and workout celebrations make interactions feel responsive. Reduce Motion disables these effects, including when changed during use. Touch devices use a 3px rounded, muted app-controlled page/workout scroll indicator that fades after scrolling. Native touch scrolling stays intact; desktop, dialog and weight-history scrollbars keep their thin styling. Hiding the native page indicator requires Safari 18.2 or newer.
 
 Maintainers and AI agents: read `skill/lift20/SKILL.md` first.
 
@@ -28,3 +28,5 @@ This checks tutorial coverage, a full Day A, timers, iframe continuity, routine/
 Run `checks/mobile.js` the same way in a touch-enabled Playwright context for iPhone/iPad geometry, safe-area, zoom-setting and Home Screen asset checks. Emulated WebKit checks cannot verify physical iOS gestures or system keyboard behavior.
 
 `checks/motion.js` verifies animated interactions with motion enabled, then live Reduce Motion changes. It also checks iframe continuity, timer/data integrity and a mocked pending sign-in state; real Google authentication is not tested.
+
+`checks/scrollbar.js` checks the touch indicator's position/fade, safe areas, workout scrolling, short pages, inner history and forced colors.

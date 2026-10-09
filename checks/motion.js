@@ -20,7 +20,7 @@ async page => {
   assert(await page.locator('.summary-tile').first().evaluate(el=>el.classList.contains('revealed')),'Visible cards reveal');
   await page.locator('.stats-strip').scrollIntoViewIfNeeded();
   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.stats-strip')).opacity==='1');
-  assert(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollbarWidth==='thin'&&getComputedStyle(document.documentElement).scrollbarColor!=='auto'),'Thin, styled native scrollbar');
+  assert(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollbarWidth==='none'&&getComputedStyle(document.querySelector('.scroll-guide')).width==='3px'),'App-controlled touch scroll indicator');
   await page.evaluate(()=>{
     const now=Date.now();check.S.w=Array.from({length:40},(_,i)=>({d:now-(39-i)*86400000,kg:63-i/10}));check.S.pr.dip=6;
   });

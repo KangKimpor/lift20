@@ -10,6 +10,8 @@ Deploy: import this repo in Vercel (Framework: Other, no build command).
 
 Optimized for Safari Home Screen use on iPhone 15 and iPad A16: fixed page zoom, standalone launch/icon, safe areas in both orientations, tablet columns, and navigation that hides while typing. In Safari, use Share → Add to Home Screen and keep Open as Web App enabled where offered. No offline page cache is installed; saved local progress remains on the device.
 
+Tap feedback, a sliding tab highlight, card reveals, dialog/history transitions, animated saves/validation and workout celebrations make interactions feel responsive. Reduce Motion disables these effects, including when changed during use. Scrollbars have a thin muted thumb and transparent track where the browser supports styling; iOS/iPadOS may retain their native indicators.
+
 Maintainers and AI agents: read `skill/lift20/SKILL.md` first.
 
 Browser regression check (use an isolated Playwright browser; it resets that browser's local Lift20 data):
@@ -24,3 +26,5 @@ npx --yes --package @playwright/cli playwright-cli run-code --filename checks/sm
 This checks tutorial coverage, a full Day A, timers, iframe continuity, routine/history editing, equipment gates, fractional weight, persistence, keyboard controls and layouts from 320 to 1280 px. It saves screenshots under `output/playwright/`. Google sign-in and live cloud sync require a real account and are not simulated by the check.
 
 Run `checks/mobile.js` the same way in a touch-enabled Playwright context for iPhone/iPad geometry, safe-area, zoom-setting and Home Screen asset checks. Emulated WebKit checks cannot verify physical iOS gestures or system keyboard behavior.
+
+`checks/motion.js` verifies animated interactions with motion enabled, then live Reduce Motion changes. It also checks iframe continuity, timer/data integrity and a mocked pending sign-in state; real Google authentication is not tested.

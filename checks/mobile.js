@@ -4,6 +4,7 @@ async page => {
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   const base='http://127.0.0.1:4173/';
+  await page.route('https://www.gstatic.com/firebasejs/**',route=>route.abort());
   await page.route(base,async route=>{
     const response=await route.fetch();
     await route.fulfill({response,body:(await response.text()).replace('</script></body>',

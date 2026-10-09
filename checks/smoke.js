@@ -6,6 +6,7 @@ async page => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   const base = 'http://127.0.0.1:4173/';
+  await page.route('https://www.gstatic.com/firebasejs/**',route=>route.abort());
   // Test-only access to module state; the shipped page exports nothing.
   await page.route(base, async route => {
     const response = await route.fetch();

@@ -28,11 +28,11 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 
 ## Screens and layout
 
-- Home has clickable next-session/decimal weight tiles, a session card with exercise-detail buttons, three calendar months of real activity dots (`week()`), and totals. Activity dates/counts are accessible.
+- Home starts with a local-time greeting to Por. No brand row or shared header breadcrumb. Clickable tiles show this week's completed workouts/training minutes and decimal body weight, both opening Progress. The session card keeps exercise-detail buttons, three calendar months of real activity dots (`week()`), and totals. Activity dates/counts are accessible.
 - Workouts has four equal A/B/C/X cards, each with details/tutorial, Swap, Remove, Add exercise and Start. Remove refuses the last exercise. Day cards form two columns from 600px; exercise controls occupy their own line below 1000px.
 - Layout classes (`dashboard`, `summary-pair`, `day-grid`, `library`, `section-grid`, `profile-grid`) define explicit responsive grids, centered at max 1160px. No sidebar or `nth-of-type` placement. Floating navigation stays at the bottom on every viewport.
 - Progress has totals, fractional body-weight history/chart, normalized weekly bars, personal bests and editable recent sessions. `.n` is for integer count-up only; weight uses `.wn`/plain text.
-- `wtCard()` uses `#wi` for kg, never `#wt` (workout header). `logw` validates 20–400, rounds to 0.1 and replaces today's entry; `delw` deletes by timestamp. Weight merge unions timestamps, so deletions can return from another device; add tombstones if that becomes a problem.
+- `wtCard()` uses `#wi` for kg, never `#wt` (workout header). All weight entries appear newest first inside collapsed native History details with a bounded scroll area. `logw` validates 20–400, rounds to 0.1 and replaces today's entry; `delw` deletes by timestamp and keeps History open with focus restored. Weight merge unions timestamps, so deletions can return from another device; add tombstones if that becomes a problem.
 - Profile preserves equipment, progression guidance and signed-out/Google account behavior.
 
 ## Workout and tutorials

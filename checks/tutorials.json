@@ -1,0 +1,587 @@
+{
+  "checked": "2026-10-09",
+  "playback_sample": {"exercise":"dip","id":"3j4YTFsHodc","browser":"Chromium","currentTime":2.24,"paused":false,"readyState":4,"result":"Actual YouTube iframe playback observed"},
+  "method": "YouTube public Shorts page metadata (canonical Shorts URL, isShortsEligible, playability status and playableInEmbed) plus manual poster inspection for equipment and variant. Continuous playback of every clip was not watched; third-party playback remains dependent on YouTube and network access.",
+  "videos": {
+    "dip": {
+      "exercise": "Dips",
+      "id": "3j4YTFsHodc",
+      "title": "Chest Dips Form in 16 Seconds: Lean Forward | Chest Day",
+      "source": "https://www.youtube.com/shorts/3j4YTFsHodc",
+      "seconds": 17,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "pu": {
+      "exercise": "Push-ups",
+      "id": "04FqT6lC0i4",
+      "title": "✅ Learn the “Perfect” Push-Up",
+      "source": "https://www.youtube.com/shorts/04FqT6lC0i4",
+      "seconds": 51,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "wpu": {
+      "exercise": "Wide Push-ups",
+      "id": "skWcxqxh2qw",
+      "title": "Wide Pushups",
+      "source": "https://www.youtube.com/shorts/skWcxqxh2qw",
+      "seconds": 12,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "cgpu": {
+      "exercise": "Close-Grip Push-ups",
+      "id": "jdYi733XDM0",
+      "title": "Close Grip Push Ups",
+      "source": "https://www.youtube.com/shorts/jdYi733XDM0",
+      "seconds": 5,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dpu": {
+      "exercise": "Diamond Push-ups",
+      "id": "PPTj-MW2tcs",
+      "title": "✅ How to Do the Perfect Diamond Push-Up #shorts",
+      "source": "https://www.youtube.com/shorts/PPTj-MW2tcs",
+      "seconds": 11,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dbfp": {
+      "exercise": "DB Floor Press",
+      "id": "k8fvMnz42-g",
+      "title": "Dumbbell Floor Press - Exercise Tutorial",
+      "source": "https://www.youtube.com/shorts/k8fvMnz42-g",
+      "seconds": 28,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dbsq": {
+      "exercise": "DB Squeeze Press",
+      "id": "_61z2opDgl0",
+      "title": "Dumbbell floor squeeze press",
+      "source": "https://www.youtube.com/shorts/_61z2opDgl0",
+      "seconds": 6,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dbff": {
+      "exercise": "DB Floor Fly",
+      "id": "oQYjzNukkTY",
+      "title": "How to do a Dumbbell Fly on the Floor. #floorpress #dumbbellfly #chestfly #chestflys #dumbbells",
+      "source": "https://www.youtube.com/shorts/oQYjzNukkTY",
+      "seconds": 58,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dbpo": {
+      "exercise": "DB Pullover",
+      "id": "FYR_UbzJiew",
+      "title": "Dumbbell Pullover from the floor #howtoexercise #dumbbellexercise #exercisedemo",
+      "source": "https://www.youtube.com/shorts/FYR_UbzJiew",
+      "seconds": 17,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "ohrow": {
+      "exercise": "One-Arm DB Row",
+      "id": "Pw3glZCQMGM",
+      "title": "No Bench - Try This One Arm Dumbbell Row Technique! #shorts",
+      "source": "https://www.youtube.com/shorts/Pw3glZCQMGM",
+      "seconds": 26,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "bor": {
+      "exercise": "DB Row (two arms)",
+      "id": "ha3CnSZheb4",
+      "title": "The PERFECT Two-Arm Dumbbell Row",
+      "source": "https://www.youtube.com/shorts/ha3CnSZheb4",
+      "seconds": 13,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "shrug": {
+      "exercise": "DB Shrug",
+      "id": "dwTcBceq-wI",
+      "title": "How to do dumbbell shrugs | #shrugs #traps #delttraining #exercise #shorts #subscribe",
+      "source": "https://www.youtube.com/shorts/dwTcBceq-wI",
+      "seconds": 8,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rfly": {
+      "exercise": "DB Reverse Fly",
+      "id": "xvEkgGUrGPM",
+      "title": "Dumbbell reverse fly",
+      "source": "https://www.youtube.com/shorts/xvEkgGUrGPM",
+      "seconds": 22,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "sp": {
+      "exercise": "DB Shoulder Press",
+      "id": "wO0l5jW2NtQ",
+      "title": "How to do a Standing Dumbbell Shoulder Press!",
+      "source": "https://www.youtube.com/shorts/wO0l5jW2NtQ",
+      "seconds": 30,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "arn": {
+      "exercise": "Arnold Press",
+      "id": "69z2KymlEvQ",
+      "title": "How to do a Standing Dumbbell Arnold Press!",
+      "source": "https://www.youtube.com/shorts/69z2KymlEvQ",
+      "seconds": 26,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "lat": {
+      "exercise": "DB Lateral Raise",
+      "id": "xyK8UiC-BUw",
+      "title": "Dumbbell Lateral Raise",
+      "source": "https://www.youtube.com/shorts/xyK8UiC-BUw",
+      "seconds": 23,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "llat": {
+      "exercise": "Leaning Lateral Raise",
+      "id": "0aENFHb9wKM",
+      "title": "Lean Away DB Lateral Raise | PerformHQ #shorts #shoulders #lateralraise #PerformHQ",
+      "source": "https://www.youtube.com/shorts/0aENFHb9wKM",
+      "seconds": 10,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "yr": {
+      "exercise": "DB Y-Raise",
+      "id": "qgLEPMkSh80",
+      "title": "Bent Over Dumbbell Y Raise",
+      "source": "https://www.youtube.com/shorts/qgLEPMkSh80",
+      "seconds": 10,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "curl": {
+      "exercise": "DB Curl",
+      "id": "MKWBV29S6c0",
+      "title": "PERFECT Bicep Curl Form Tips",
+      "source": "https://www.youtube.com/shorts/MKWBV29S6c0",
+      "seconds": 8,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "ham": {
+      "exercise": "Hammer Curl",
+      "id": "VuEclXR7sZY",
+      "title": "How to Do: Hammer Curls 💪🏽 #workout #armworkout #fitness",
+      "source": "https://www.youtube.com/shorts/VuEclXR7sZY",
+      "seconds": 7,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "zot": {
+      "exercise": "Zottman Curl",
+      "id": "5Go_uOTnFl0",
+      "title": "Zottman Curl",
+      "source": "https://www.youtube.com/shorts/5Go_uOTnFl0",
+      "seconds": 32,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "oh": {
+      "exercise": "Overhead Triceps Extension",
+      "id": "QKfRhY8qvhg",
+      "title": "Standing tricep extension",
+      "source": "https://www.youtube.com/shorts/QKfRhY8qvhg",
+      "seconds": 11,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "sk": {
+      "exercise": "DB Floor Skull Crusher",
+      "id": "YRKjhLPLXho",
+      "title": "DB Skull Crushers on Floor",
+      "source": "https://www.youtube.com/shorts/YRKjhLPLXho",
+      "seconds": 11,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "gob": {
+      "exercise": "Goblet Squat",
+      "id": "eLX_dyvooKQ",
+      "title": "Dumbbell Goblet Squat",
+      "source": "https://www.youtube.com/shorts/eLX_dyvooKQ",
+      "seconds": 40,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "tsq": {
+      "exercise": "Tempo Squat",
+      "id": "a4O-Sma2GMc",
+      "title": "Tempo Bodyweight Squat",
+      "source": "https://www.youtube.com/shorts/a4O-Sma2GMc",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "sumo": {
+      "exercise": "DB Sumo Squat",
+      "id": "bRCjBCtBGIo",
+      "title": "The PERFECT Dumbbell Sumo Squat",
+      "source": "https://www.youtube.com/shorts/bRCjBCtBGIo",
+      "seconds": 13,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rdl": {
+      "exercise": "DB Romanian Deadlift",
+      "id": "hu3jRvTc_po",
+      "title": "The PERFECT Dumbbell Romanian Deadlift",
+      "source": "https://www.youtube.com/shorts/hu3jRvTc_po",
+      "seconds": 11,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "slrdl": {
+      "exercise": "Single-Leg RDL",
+      "id": "U3prDlAbJDw",
+      "title": "Origin Gym - Single Leg Dumbbell RDL",
+      "source": "https://www.youtube.com/shorts/U3prDlAbJDw",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rl": {
+      "exercise": "Reverse Lunge",
+      "id": "J9MpoAQCjos",
+      "title": "Dumbbell Reverse Lunge",
+      "source": "https://www.youtube.com/shorts/J9MpoAQCjos",
+      "seconds": 26,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "fl": {
+      "exercise": "Forward Lunge",
+      "id": "x9uhdK9eTqE",
+      "title": "Dumbbell Forward Lunge",
+      "source": "https://www.youtube.com/shorts/x9uhdK9eTqE",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "gb": {
+      "exercise": "DB Glute Bridge",
+      "id": "iOrJXNUH3to",
+      "title": "DB glute bridge",
+      "source": "https://www.youtube.com/shorts/iOrJXNUH3to",
+      "seconds": 6,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "slgb": {
+      "exercise": "Single-Leg Glute Bridge",
+      "id": "V1NKta2znwU",
+      "title": "Single-leg Bodyweight Glute Bridge",
+      "source": "https://www.youtube.com/shorts/V1NKta2znwU",
+      "seconds": 13,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "calf": {
+      "exercise": "DB Calf Raise",
+      "id": "ADITZCcUyVo",
+      "title": "DB Calf Raises",
+      "source": "https://www.youtube.com/shorts/ADITZCcUyVo",
+      "seconds": 9,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dead": {
+      "exercise": "Dead Bug",
+      "id": "DqLL45uk2Tk",
+      "title": "Deadbugs",
+      "source": "https://www.youtube.com/shorts/DqLL45uk2Tk",
+      "seconds": 13,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rc": {
+      "exercise": "Reverse Crunch",
+      "id": "eX9vjAsdWvY",
+      "title": "Reverse Crunch - Proper Form To REALLY Train your Abs! #abs #core",
+      "source": "https://www.youtube.com/shorts/eX9vjAsdWvY",
+      "seconds": 10,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "bic": {
+      "exercise": "Bicycle Crunch",
+      "id": "NWzlS1Lp1e8",
+      "title": "How to do Bicycle Crunches Properly",
+      "source": "https://www.youtube.com/shorts/NWzlS1Lp1e8",
+      "seconds": 12,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rt": {
+      "exercise": "DB Russian Twist",
+      "id": "T0eJAr2kHqo",
+      "title": "Dumbbell Russian Twists feet on floor",
+      "source": "https://www.youtube.com/shorts/T0eJAr2kHqo",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "pup": {
+      "exercise": "Pull-ups",
+      "id": "9rckBLbVe8c",
+      "title": "How To Do The Perfect Pull-up",
+      "source": "https://www.youtube.com/shorts/9rckBLbVe8c",
+      "seconds": 20,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "chin": {
+      "exercise": "Chin-ups",
+      "id": "Oi3bW9nQmGI",
+      "title": "✅ HOW to do CHIN UPS",
+      "source": "https://www.youtube.com/shorts/Oi3bW9nQmGI",
+      "seconds": 14,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "hkr": {
+      "exercise": "Hanging Knee Raise",
+      "id": "Fl8rJJ7mZJM",
+      "title": "How To Do Hanging Knee Raises",
+      "source": "https://www.youtube.com/shorts/Fl8rJJ7mZJM",
+      "seconds": 24,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "tpu": {
+      "exercise": "Tempo Push-ups",
+      "id": "UYLm4HpSarA",
+      "title": "Tempo Push-up",
+      "source": "https://www.youtube.com/shorts/UYLm4HpSarA",
+      "seconds": 14,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "apu": {
+      "exercise": "Archer Push-ups",
+      "id": "vwMIA4BVvYc",
+      "title": "How to do Archer push up? #calisthenics #fitness #workout #bodyweighttraining #homeworkout",
+      "source": "https://www.youtube.com/shorts/vwMIA4BVvYc",
+      "seconds": 16,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "dbpu": {
+      "exercise": "DB Push-ups",
+      "id": "qfFF4gVtavw",
+      "title": "Upgrade your push-ups with dumbbells #fitness #workout #calisthenics #dumbbells",
+      "source": "https://www.youtube.com/shorts/qfFF4gVtavw",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "sfp": {
+      "exercise": "Single-Arm DB Floor Press",
+      "id": "y477pOZ_fNM",
+      "title": "Single-Arm DB Floor Press",
+      "source": "https://www.youtube.com/shorts/y477pOZ_fNM",
+      "seconds": 8,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "kick": {
+      "exercise": "DB Kickback",
+      "id": "3Bv1n7-DN7c",
+      "title": "Dumbbell Tricep Kickback",
+      "source": "https://www.youtube.com/shorts/3Bv1n7-DN7c",
+      "seconds": 27,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "tate": {
+      "exercise": "Tate Press",
+      "id": "H_MRc-Pv5Dg",
+      "title": "DB Tate Floor Press",
+      "source": "https://www.youtube.com/shorts/H_MRc-Pv5Dg",
+      "seconds": 17,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "udip": {
+      "exercise": "Upright Dips",
+      "id": "-AU3WYhQnJ0",
+      "title": "Want Bigger Triceps? 💪 Master the Parallel Bar Dips with these tips!",
+      "source": "https://www.youtube.com/shorts/-AU3WYhQnJ0",
+      "seconds": 14,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "sup": {
+      "exercise": "Superman",
+      "id": "ZH0FS5Gp_eg",
+      "title": "Superman exercise - Fit Family Physical Therapy",
+      "source": "https://www.youtube.com/shorts/ZH0FS5Gp_eg",
+      "seconds": 9,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rrow": {
+      "exercise": "Renegade Row",
+      "id": "YUMXGLL2IKE",
+      "title": "Alternating Dumbbell Renegade Row",
+      "source": "https://www.youtube.com/shorts/YUMXGLL2IKE",
+      "seconds": 21,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "uhr": {
+      "exercise": "Underhand DB Row",
+      "id": "UUCD7VQlSZE",
+      "title": "DB Underhand Row",
+      "source": "https://www.youtube.com/shorts/UUCD7VQlSZE",
+      "seconds": 35,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "pike": {
+      "exercise": "Pike Push-ups",
+      "id": "89-8waE2XKI",
+      "title": "Pike Push-Ups in 30 seconds💪🏾🔥",
+      "source": "https://www.youtube.com/shorts/89-8waE2XKI",
+      "seconds": 19,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "fr": {
+      "exercise": "DB Front Raise",
+      "id": "yHx8wPv4RPo",
+      "title": "How to do Standing Dumbbell Front Raises!",
+      "source": "https://www.youtube.com/shorts/yHx8wPv4RPo",
+      "seconds": 25,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "uprow": {
+      "exercise": "DB Upright Row",
+      "id": "2QTnG_7bKbo",
+      "title": "Dumbbell Upright Row",
+      "source": "https://www.youtube.com/shorts/2QTnG_7bKbo",
+      "seconds": 7,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "cuban": {
+      "exercise": "Cuban Press",
+      "id": "rv41bj3JTkQ",
+      "title": "DB Cuban press",
+      "source": "https://www.youtube.com/shorts/rv41bj3JTkQ",
+      "seconds": 6,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "ptr": {
+      "exercise": "Prone T Raise",
+      "id": "VAdGQKcxYZw",
+      "title": "Prone T - Fit Family Physical Therapy",
+      "source": "https://www.youtube.com/shorts/VAdGQKcxYZw",
+      "seconds": 10,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "xham": {
+      "exercise": "Cross-Body Hammer Curl",
+      "id": "7EzglNaThZY",
+      "title": "Cross-Body DB Hammer Curl",
+      "source": "https://www.youtube.com/shorts/7EzglNaThZY",
+      "seconds": 14,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "rcurl": {
+      "exercise": "Reverse Curl",
+      "id": "1Nvg_vHUJPY",
+      "title": "DB Reverse Curl",
+      "source": "https://www.youtube.com/shorts/1Nvg_vHUJPY",
+      "seconds": 12,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    },
+    "tcurl": {
+      "exercise": "Tempo Curl",
+      "id": "9tLWzt4gFaU",
+      "title": "Standing DB Slow Eccentric Curls",
+      "source": "https://www.youtube.com/shorts/9tLWzt4gFaU",
+      "seconds": 17,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Equipment and movement variant match"
+    }
+  }
+}

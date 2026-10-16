@@ -90,15 +90,18 @@ async page => {
   assert(await page.locator('#dlg [data-a="play"]').getAttribute('data-v')===await page.evaluate(()=>check.YT.dip),'Empty override restores built-in');
   await page.keyboard.press('Escape');
   await page.locator('[data-a="add"][data-v="A"]').click();
+  assert(await page.locator('#dlg [data-a="addp"]').count()===0,'Add blocked at 4 exercises');
+  await page.locator('[data-a="del"][data-v="A3"]').click();
+  await page.locator('[data-a="add"][data-v="A"]').click();
   assert(await page.locator('#dlg [data-a="addp"][data-v="pup"]').count()===0,'Equipment gate excludes pull-ups');
   await page.locator('#dlg [data-a="addp"][data-v="pu"]').click();
   assert(await page.evaluate(()=>check.S.prog.A.includes('pu')),'Add saves');
-  await page.locator('[data-a="del"][data-v="A5"]').click();
+  await page.locator('[data-a="del"][data-v="A3"]').click();
   await page.locator('[data-a="swap"][data-v="A0"]').click();
   const swapped=await page.locator('#dlg [data-a="pick"]').first().getAttribute('data-v');
   await page.locator('#dlg [data-a="pick"]').first().click();
   assert(await page.evaluate(()=>check.S.prog.A[0])===swapped,'Program swap saves');
-  await page.evaluate(()=>{check.S.prog.A=['dip','gob','ohrow','rdl','curl'];check.save();check.render();});
+  await page.evaluate(()=>{check.S.prog.A=['dip','gob','ohrow','rdl'];check.save();check.render();});
   await nav('me');
   assert(await page.getByRole('button',{name:'Continue with Google'}).count()===1,'Signed-out profile');
   for(const q of ['dip','db','bar']) {
@@ -106,10 +109,12 @@ async page => {
     await page.locator(`[data-k="eq"][value="${q}"]`).uncheck();
     assert(await page.evaluate(()=>Object.values(check.S.prog).flat().every(i=>check.E[i].q==='bw'||check.S.eq[check.E[i].q])),'Equipment toggle repairs all days: '+q);
   }
-  await page.evaluate(()=>{Object.assign(check.S.eq,{dip:1,db:1,bar:0});check.S.prog={A:['dip','gob','ohrow','rdl','curl'],B:['sp','rl','pu','bor','lat'],C:['dip','rdl','gob','sp','ham'],X:['tpu','bor','arn','sk','dead']};check.save();});
+  await page.evaluate(()=>{Object.assign(check.S.eq,{dip:1,db:1,bar:0});check.S.prog={A:['dip','gob','ohrow','rdl'],B:['sp','rl','pu','bor'],C:['dip','rdl','gob','sp'],X:['tpu','bor','arn','sk']};check.save();});
   await nav('prog');
   await page.evaluate(()=>{const ids=[...check.S.prog.X];check.S.prog.X=['dead'];check.act.del('X0');if(check.S.prog.X.length!==1)throw Error('Last-exercise guard');check.S.prog.X=ids;check.save();check.render();});
   await page.locator('[data-a="start"][data-v="A"]').click();
+  assert(await page.locator('#w .li').count()===5&&await page.locator('#w #cs').count()===0,'Warm-up lists 5 moves before exercise 1');
+  await page.locator('#w [data-a="go"]').click();
   assert(await page.evaluate(()=>document.querySelector('#app').inert&&document.querySelector('nav').inert),'Background inert during workout');
   await page.locator('#w [data-a="rep"][data-v="1"]').click();
   assert(await page.locator('#rv').textContent()==='7','Rep stepper');
@@ -141,13 +146,13 @@ async page => {
   assert(await page.evaluate(()=>check.W.ids[0])===live,'Live swap');
   // Restore the original exercise so this completes a full default Day A.
   await page.evaluate(()=>{check.W.ids[0]='dip';check.S.prog.A[0]='dip';check.act.next();});
-  for(let sets=1;sets<15;sets++) {
+  for(let sets=1;sets<12;sets++) {
     await page.locator('#cs').click();
     await page.waitForFunction(()=>!check.W.busy);
     if(await page.locator('#nx').count())await page.locator('#nx').click();
   }
   assert(await page.locator('#w h1').textContent()==='Workout complete','Workout summary');
-  assert(await page.evaluate(()=>check.S.hist.at(-1).logs.length)===15,'All 15 sets saved');
+  assert(await page.evaluate(()=>check.S.hist.at(-1).logs.length)===12,'All 12 sets saved');
   await page.locator('#w [data-a="close"]').click();
   assert(!await page.evaluate(()=>document.querySelector('#app').inert),'Background restored');
   await page.waitForFunction(()=>document.activeElement.closest('nav'));
@@ -170,7 +175,7 @@ async page => {
   await page.locator('[data-a="hv"]').click();
   await page.locator('[data-a="hrep"][data-v="0:1"]').click();
   await page.locator('[data-a="hadd"]').first().click();
-  assert(await page.evaluate(()=>check.S.hist[0].logs.length)===16,'History add set');
+  assert(await page.evaluate(()=>check.S.hist[0].logs.length)===13,'History add set');
   await page.locator('[data-a="hset"]').first().click();
   await page.getByRole('button',{name:'Done',exact:true}).click();
   assert(await page.evaluate(()=>check.S.pr.dip===Math.max(...check.S.hist[0].logs.filter(l=>l.id==='dip').map(l=>l.reps))),'PR recalculated after edit');
@@ -210,13 +215,14 @@ async page => {
   await page.setViewportSize({width:844,height:390});
   await nav('prog');
   await page.locator('[data-a="start"][data-v="X"]').click();
+  await page.locator('#w [data-a="go"]').click();
   await page.locator('#w [data-a="vp"]').click();
   assert(await page.evaluate(()=>document.querySelector('.vp').getBoundingClientRect().width<=innerWidth),'Landscape video bounded');
   await page.screenshot({path:'output/playwright/workout-landscape.png',animations:'disabled'});
   await page.locator('#w [data-a="quit"]').click();
   await page.locator('#dlg [data-a="yes"]').click();
   await page.waitForFunction(()=>document.activeElement.matches('[data-a="start"]'));
-  await page.evaluate(()=>{check.act.start('X');check.act.done();check.act.quit();check.act.yes();});
+  await page.evaluate(()=>{check.act.start('X');check.act.go();check.act.done();check.act.quit();check.act.yes();});
   await page.waitForTimeout(650); // Let the canceled set's delayed callback run.
   assert(await page.evaluate(()=>check.W===null),'Ending during set feedback stays closed');
   await page.setViewportSize({width:390,height:844});
@@ -239,5 +245,5 @@ async page => {
   await page.keyboard.press('Escape');
   assert(!await page.locator('#dlg').isVisible(),'Keyboard dialog closes');
   assert(errors.length===0,'No app runtime errors: '+errors.join('; '));
-  return 'PASS: 58 tutorial mappings; five views; A/B/C/X; full 15-set Day A; player continuity; timer; swaps/equipment; history/PR; decimal weight; persistence; 320/390/820/1280 layouts; landscape; keyboard focus; light; reduced motion.';
+  return 'PASS: 58 tutorial mappings; five views; A/B/C/X; full 12-set Day A with warm-up; 4-exercise cap; player continuity; timer; swaps/equipment; history/PR; decimal weight; persistence; 320/390/820/1280 layouts; landscape; keyboard focus; light; reduced motion.';
 }

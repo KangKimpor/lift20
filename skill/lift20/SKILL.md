@@ -20,7 +20,7 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 
 - `L` is the exercise table: `id|name|group|pattern|equip|difficulty|sets|repLo|repHi|rest|how-to`. Parsed once into `E`, currently 58 exercises. Equipment: `bw db dip bar`. Groups: `chest back shoulders biceps triceps legs core`. Difficulty: 1 beginner, 2 intermediate. Never rename/reuse IDs: history, PRs and saved videos refer to them.
 - `S` persists in `localStorage['lift20']`: `{prog:{A,B,C,X},hdel:[timestamps],hist:[{d,dur,day,logs:[{id,reps}]}],eq,pr,w:[{d,kg}],vids:{id:youtubeId}}`. Preserve the schema and local-only operation. `ensure()` supplies defaults at load and after cloud merge.
-- `DAY`, `WHEN` define A/B/C/X. Day X defaults to Tempo Push-ups, DB Row (two arms), Arnold Press, DB Floor Skull Crusher, Dead Bug.
+- `DAY`, `WHEN` define A/B/C/X. Day X defaults to Tempo Push-ups, DB Row (two arms), Arnold Press, DB Floor Skull Crusher.
 - `av(id)` is the equipment gate used by all pickers. `alts()` finds same-group replacements, preferring the same movement. `fix()` repairs all days after a gear toggle; unsupported moves with no available replacement drop out, and an empty day gets Push-ups. This keeps curls from remaining when dumbbells are disabled.
 - `FM` powers library filters (`all upper chest back shoulders arms legs core`). Native text search uses `Q`. Unavailable exercises remain inspectable, while add/swap remain gated.
 - `home plan ex stats me` return markup; `V` maps `prog` to `plan`. `render()` swaps `#app`. Clicks dispatch through `data-a`/`data-v` to `act`; the clicked element is a second argument. Equipment changes use `data-k=eq`. Avoid inline event handlers.
@@ -70,10 +70,15 @@ Read the current `index.html` before editing. Static vanilla JavaScript, one fil
 ## Verification and releases
 
 - Use an isolated browser: `python -m http.server 4173 --bind 127.0.0.1`, then `npx --yes --package @playwright/cli playwright-cli open http://127.0.0.1:4173` and `npx --yes --package @playwright/cli playwright-cli run-code --filename checks/smoke.js`.
-- The runnable check resets only that browser's local Lift20 state. It checks all tutorials/views/days; a full 15-set Day A; iframe continuity and close; timer controls; routine/equipment/history/PR paths; 62.5 kg; refresh persistence; 320/390/820/1280 and landscape; light tokens, reduced motion and keyboard controls. Screenshots go to `output/playwright/`.
+- The runnable check resets only that browser's local Lift20 state. It checks all tutorials/views/days; a full 12-set Day A (after the warm-up); iframe continuity and close; timer controls; routine/equipment/history/PR paths; 62.5 kg; refresh persistence; 320/390/820/1280 and landscape; light tokens, reduced motion and keyboard controls. Screenshots go to `output/playwright/`.
 - Real Google sign-in/cloud sync needs a real authenticated account; do not claim it tested from a mock. Public YouTube metadata is not proof that every browser/network will play a clip.
 - `checks/mobile.js` runs in an isolated touch-enabled Playwright context and verifies zoom/manifest/icons, iPhone 15 (393×852), iPad A16 (820×1180), both orientations, split view, injected safe areas, touch keyboard behavior and workout/dialog geometry. WebKit emulation is not physical iOS testing.
 - `checks/motion.js` runs with motion enabled in a touch context. It checks feedback cleanup, scroll reveals/scrollbars, immediate state changes, validation, search focus, native dialog close, active iframe continuity, PR/rest/completion, mocked pending sign-in UI and live Reduce Motion changes.
 - `checks/scrollbar.js` checks the touch indicator's progress/fade, visual viewport events, landscape safe areas, workouts, short pages, inner history and forced colors.
 - Deploy is static Vercel (Framework Other, no build/output setting). The release branch is `master`; never push/deploy without user authorization.
 - Releases use semantic tags. Create/push tags and publish GitHub releases only when requested; never request tokens in chat.
+
+## Warm-up, Back, 4-exercise cap
+- Every day has at most 4 exercises (MAX). ensure() trims older saves to 4 on load; ct.add refuses a 5th with a toast. Defaults: A dip/gob/ohrow/rdl, B sp/rl/pu/bor, C dip/rdl/gob/sp, X tpu/bor/arn/sk.
+- ct.start opens the workout in a warm-up phase (W.wu=1, list WU, from the owner's ChatGPT program; the dips line is hidden when the dip station is off). ct.go starts exercise 1. The warm-up is not an exercise: no ids, no history, but it counts toward the workout duration.
+- W.h is a stack of [exerciseIndex,setIndex,logged] pushed by done, skipset and skipex. ct.back pops it: removes the log (or the skip), recomputes W.best and W.prs, clears rest, and re-opens that set with the reps that were typed. Both wu and h are in the recovery draft; old drafts without them still restore.

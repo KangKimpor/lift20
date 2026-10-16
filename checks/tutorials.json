@@ -1,6 +1,14 @@
 {
   "checked": "2026-10-09",
-  "playback_sample": {"exercise":"dip","id":"3j4YTFsHodc","browser":"Chromium","currentTime":2.24,"paused":false,"readyState":4,"result":"Actual YouTube iframe playback observed"},
+  "playback_sample": {
+    "exercise": "dip",
+    "id": "3j4YTFsHodc",
+    "browser": "Chromium",
+    "currentTime": 2.24,
+    "paused": false,
+    "readyState": 4,
+    "result": "Actual YouTube iframe playback observed"
+  },
   "method": "YouTube public Shorts page metadata (canonical Shorts URL, isShortsEligible, playability status and playableInEmbed) plus manual poster inspection for equipment and variant. Continuous playback of every clip was not watched; third-party playback remains dependent on YouTube and network access.",
   "videos": {
     "dip": {
@@ -582,6 +590,39 @@
       "shorts": true,
       "embed_allowed": true,
       "poster_review": "Equipment and movement variant match"
+    },
+    "split": {
+      "exercise": "Static Split Squat",
+      "id": "sw4MzpC8l58",
+      "title": "Dumbbell split squat technique! 🦿 Follow for more fitness tips ✅",
+      "source": "https://www.youtube.com/shorts/sw4MzpC8l58",
+      "seconds": 6,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Dumbbells at sides; both feet on floor; no bench",
+      "checked": "2026-10-16"
+    },
+    "ssrdl": {
+      "exercise": "Staggered-Stance DB RDL",
+      "id": "gw3z148hJiU",
+      "title": "Staggered Stance DB RDL Demo",
+      "source": "https://www.youtube.com/shorts/gw3z148hJiU",
+      "seconds": 15,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Two dumbbells; rear toes on floor for balance",
+      "checked": "2026-10-16"
+    },
+    "slcalf": {
+      "exercise": "Single-Leg Calf Raise",
+      "id": "YTXPPFjZQjQ",
+      "title": "Single leg calf raise from floor",
+      "source": "https://www.youtube.com/shorts/YTXPPFjZQjQ",
+      "seconds": 12,
+      "shorts": true,
+      "embed_allowed": true,
+      "poster_review": "Bodyweight single-leg raise on flat floor with wall support; optional dumbbell loading is described in app",
+      "checked": "2026-10-16"
     }
   }
 }

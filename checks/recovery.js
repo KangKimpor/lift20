@@ -17,12 +17,12 @@ async page => {
   await page.evaluate(()=>{check.act.start('A');check.act.go()});
   await page.locator('#w [data-a="rep"][data-v="1"]').click();
   await reload(); // pagehide flushes the pending rep save.
-  assert(await page.locator('#rv').textContent()==='7','Rep selection restored on immediate refresh');
+  assert(await page.locator('#rv').textContent()==='6','Rep selection restored on immediate refresh');
   assert(await page.evaluate(()=>check.W.day==='A'&&check.W.logs.length===0&&document.querySelector('#app').inert),'Workout and background state restored');
   // Reload while the 550ms feedback callback is still pending.
   await page.evaluate(()=>{check.act.done();location.reload()});
   await page.waitForFunction(()=>window.check&&check.W?.rest);
-  assert(await page.evaluate(()=>check.W.logs.length===1&&check.W.logs[0].reps===7&&check.W.s===1&&!check.W.busy),'Pending completed set advances exactly once');
+  assert(await page.evaluate(()=>check.W.logs.length===1&&check.W.logs[0].reps===6&&check.W.s===1&&!check.W.busy),'Pending completed set advances exactly once');
   const end=await page.evaluate(()=>check.W.rest.end);
   await reload();
   assert(await page.evaluate(end=>check.W.rest.end===end&&check.W.logs.length===1,end),'Running rest deadline survives refresh');
@@ -42,7 +42,7 @@ async page => {
   await page.waitForTimeout(250);
   assert(await page.evaluate(()=>writes.length===2&&writes.every(w=>w.key==='lift20_workout'&&w.bytes<5000)),'Rapid reps batch into one small draft write');
   await reload();
-  assert(await page.locator('#rv').textContent()==='27','Skipped rest and batched reps restored');
+  assert(await page.locator('#rv').textContent()==='26','Skipped rest and batched reps restored');
   await page.evaluate(()=>{check.act.sww();check.act.pick('pu')});
   await reload();
   assert(await page.evaluate(()=>check.W.ids[0]==='pu'&&check.W.s===1),'Live exercise swap restored');
@@ -61,7 +61,7 @@ async page => {
   await page.waitForFunction(()=>check.W.rest);
   await page.locator('#w [data-a="skipex"]').click();
   await reload();
-  assert(await page.evaluate(()=>check.W.i===1&&check.W.s===0&&check.W.ids[1]==='gob'&&check.W.logs.length===1&&check.W.total===10&&!check.W.rest),'Skip during rest preserves sets and saves next exercise');
+  assert(await page.evaluate(()=>check.W.i===1&&check.W.s===0&&check.W.ids[1]==='ohrow'&&check.W.logs.length===1&&check.W.total===10&&!check.W.rest),'Skip during rest preserves sets and saves next exercise');
   for(let i=0;i<3;i++)await page.locator('#w [data-a="skipex"]').click();
   assert(await page.evaluate(()=>check.W.fin&&check.S.hist.length===1&&check.S.hist[0].logs.length===1),'Skipping final exercise finishes only logged sets');
   await page.evaluate(()=>{check.act.close();check.S.hist=[];check.S.pr={};localStorage.lift20=JSON.stringify(check.S);check.act.start('A');check.act.go()});
@@ -119,12 +119,12 @@ async page => {
   await page.waitForFunction(()=>check.W.rest);
   await reload();
   await page.locator('#w [data-a="back"]').click();
-  assert(await page.evaluate(()=>check.W.i===0&&check.W.s===0&&check.W.logs.length===0&&!check.W.rest&&check.W.reps===9),'Back undoes a set after refresh and keeps the typed reps');
+  assert(await page.evaluate(()=>check.W.i===0&&check.W.s===0&&check.W.logs.length===0&&!check.W.rest&&check.W.reps===11),'Back undoes a set after refresh and keeps the typed reps');
   await page.evaluate(()=>{check.act.quit();check.act.yes()});
   await page.waitForFunction(()=>!document.querySelector('.toast'));
   // Storage failures should warn once and leave the workout usable.
   await page.evaluate(()=>{Storage.prototype.setItem=function(){throw Error('QuotaExceededError')};check.S.prog.A[0]='dip';check.act.start('A');check.act.go();check.act.rep('1');check.saveWorkout();check.saveWorkout()});
-  assert(await page.locator('.toast').count()===1&&await page.locator('#rv').textContent()==='7','Blocked storage warns once without breaking workout');
+  assert(await page.locator('.toast').count()===1&&await page.locator('#rv').textContent()==='6','Blocked storage warns once without breaking workout');
   assert(errors.length===0,'No runtime errors: '+errors.join('; '));
   return 'PASS: immediate refresh; pending/final sets; running/paused/adjusted/expired rest; rep batching; zero timer writes; swaps; skip exercise/set; discard; completion deduplication; corrupt drafts; storage failure.';
 }

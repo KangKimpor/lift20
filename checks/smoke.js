@@ -47,7 +47,7 @@ async page => {
     const invalid=['https://evil.com/shorts/04FqT6lC0i4','https://youtube.com.evil.com/watch?v=04FqT6lC0i4','javascript:alert(1)','https://youtube.com/shorts/04FqT6lC0i4junk','https://youtu.be/short'];
     return {count:Object.keys(E).length,full:Object.keys(E).every(id=>/^[\w-]{11}$/.test(YT[id]))&&Object.keys(YT).every(id=>E[id]),parser:valid.every(x=>parseVideo(x)==='04FqT6lC0i4')&&invalid.every(x=>parseVideo(x)===null)};
   });
-  assert(coverage.count===58&&coverage.full, 'All 58 tutorial mappings');
+  assert(coverage.count===61&&coverage.full, 'All 61 tutorial mappings');
   assert(coverage.parser,'YouTube host and ID validation');
   const nav = async v => {await page.locator(`nav [data-v="${v}"]`).click();};
   for(const width of [390,820,1280]) {
@@ -101,7 +101,7 @@ async page => {
   const swapped=await page.locator('#dlg [data-a="pick"]').first().getAttribute('data-v');
   await page.locator('#dlg [data-a="pick"]').first().click();
   assert(await page.evaluate(()=>check.S.prog.A[0])===swapped,'Program swap saves');
-  await page.evaluate(()=>{check.S.prog.A=['dip','gob','ohrow','rdl'];check.save();check.render();});
+  await page.evaluate(()=>{check.S.prog.A=['dip','ohrow','rl','rdl'];check.save();check.render();});
   await nav('me');
   assert(await page.getByRole('button',{name:'Continue with Google'}).count()===1,'Signed-out profile');
   for(const q of ['dip','db','bar']) {
@@ -109,7 +109,7 @@ async page => {
     await page.locator(`[data-k="eq"][value="${q}"]`).uncheck();
     assert(await page.evaluate(()=>Object.values(check.S.prog).flat().every(i=>check.E[i].q==='bw'||check.S.eq[check.E[i].q])),'Equipment toggle repairs all days: '+q);
   }
-  await page.evaluate(()=>{Object.assign(check.S.eq,{dip:1,db:1,bar:0});check.S.prog={A:['dip','gob','ohrow','rdl'],B:['sp','rl','pu','bor'],C:['dip','rdl','gob','sp'],X:['tpu','bor','arn','sk']};check.save();});
+  await page.evaluate(()=>{Object.assign(check.S.eq,{dip:1,db:1,bar:0});check.S.prog={A:['dip','ohrow','rl','rdl'],B:['sp','bor','pu','gob'],C:['dip','ohrow','split','ssrdl'],X:['ham','slcalf','dead','ptr']};check.save();});
   await nav('prog');
   await page.evaluate(()=>{const ids=[...check.S.prog.X];check.S.prog.X=['dead'];check.act.del('X0');if(check.S.prog.X.length!==1)throw Error('Last-exercise guard');check.S.prog.X=ids;check.save();check.render();});
   await page.locator('[data-a="start"][data-v="A"]').click();
@@ -117,7 +117,7 @@ async page => {
   await page.locator('#w [data-a="go"]').click();
   assert(await page.evaluate(()=>document.querySelector('#app').inert&&document.querySelector('nav').inert),'Background inert during workout');
   await page.locator('#w [data-a="rep"][data-v="1"]').click();
-  assert(await page.locator('#rv').textContent()==='7','Rep stepper');
+  assert(await page.locator('#rv').textContent()==='6','Rep stepper');
   await page.locator('#w [data-a="vp"]').click();
   await page.waitForFunction(()=>!document.querySelector('.toast'));
   await page.locator('#wv img').evaluate(img=>img.decode().catch(()=>{}));
@@ -245,5 +245,5 @@ async page => {
   await page.keyboard.press('Escape');
   assert(!await page.locator('#dlg').isVisible(),'Keyboard dialog closes');
   assert(errors.length===0,'No app runtime errors: '+errors.join('; '));
-  return 'PASS: 58 tutorial mappings; five views; A/B/C/X; full 12-set Day A with warm-up; 4-exercise cap; player continuity; timer; swaps/equipment; history/PR; decimal weight; persistence; 320/390/820/1280 layouts; landscape; keyboard focus; light; reduced motion.';
+  return 'PASS: 61 tutorial mappings; five views; A/B/C/X; full 12-set Day A with warm-up; 4-exercise cap; player continuity; timer; swaps/equipment; history/PR; decimal weight; persistence; 320/390/820/1280 layouts; landscape; keyboard focus; light; reduced motion.';
 }

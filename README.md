@@ -2,13 +2,15 @@
 
 Personal workout app: Day A/B/C plus optional Day X, set tracker, rest timer, editable routines, PRs and body-weight history. One `index.html`, no build.
 
+The strength/fitness program uses dips, rows, lunges and hinges on A; shoulder press, rows, push-ups and goblet squats on B; dips, rows, floor split squats and staggered-stance RDLs on C. Optional X is 2 sets each of hammer curls, single-leg calf raises, dead bugs and prone T raises. Rest is 3 minutes for dips, 2 minutes for other program compounds, 75 seconds for curls and 60 seconds for the other accessories. Unilateral targets are per side; finish both sides before logging a set. Existing saved routines update once to this program without removing history, PRs, weights or saved videos. Future routine edits persist.
+
 Workouts auto-save on this device and reopen after a refresh or browser restart, preserving sets, reps, exercise swaps and rest (including pauses). Small local snapshots save on changes; rep taps batch for 150ms and timer ticks never save. Finishing or confirming End workout clears the draft. Recovery requires available browser storage and the same browser/site; active workouts do not sync across devices.
 
 Skip exercise moves to the next exercise and keeps sets already logged. Skipping the last exercise finishes with those sets; skipping everything creates no empty workout record.
 
 Skip set skips just the current set without logging reps or starting another rest. The last set advances to the next exercise or finishes the session, and skipped sets survive refresh.
 
-Dark glass dashboard, floating navigation, exercise search and responsive phone/tablet/desktop layouts. All 58 exercises have click-to-play YouTube Shorts tutorials in their details and workout view; saved video links override the built-ins. Tutorial source and metadata checks are recorded in [checks/tutorials.json](checks/tutorials.json). YouTube playback depends on its service and your network.
+Dark glass dashboard, floating navigation, exercise search and responsive phone/tablet/desktop layouts. All 61 exercises have click-to-play YouTube Shorts tutorials in their details and workout view; saved video links override the built-ins. Tutorial source and metadata checks are recorded in [checks/tutorials.json](checks/tutorials.json). YouTube playback depends on its service and your network.
 
 Run locally: open `index.html`, or `npx serve .`
 
@@ -30,6 +32,8 @@ npx --yes --package @playwright/cli playwright-cli run-code --filename checks/sm
 ```
 
 This checks tutorial coverage, a full Day A, timers, iframe continuity, routine/history editing, equipment gates, fractional weight, persistence, keyboard controls and layouts from 320 to 1280 px. It saves screenshots under `output/playwright/`. Google sign-in and live cloud sync require a real account and are not simulated by the check.
+
+Run `checks/program.js` the same way to verify the coached A/B/C/X prescriptions, actual rest timers, per-side labels, saved-routine migration, data preservation and later customizations.
 
 Run `checks/recovery.js` the same way to verify refresh recovery during sets/rest, paused timers, swaps, completion/discard cleanup, corrupted drafts, blocked storage and event-only writes.
 
